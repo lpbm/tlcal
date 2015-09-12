@@ -1,6 +1,6 @@
 from datetime import datetime
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from liquid.model import event
 from liquid.static import icon
 
@@ -60,7 +60,11 @@ class Calendar:
         if self.debug:
             print("Found %d days" % no_days)
 
-        day = self.date
+        day = datetime(
+            year=self.date.year,
+            month=self.date.month,
+            day=self.date.day,
+        )
         _events = []
         for day_html in days_html_list:
             start_day = int(day_html["data-day"])
@@ -76,10 +80,8 @@ class Calendar:
                         _event = event.Event()
                         if calendar == "sc2":
                             _event.type = Calendar.SC2IconMapper.get_icon_identifier(event_block)
-                            _event.icon = Calendar.SC2IconMapper.get_data(_event.icon)
                         else:
                             _event.type = calendar
-                            _event.icon = icon.Icon.get_data(calendar)
 
                         start_block = event_block.findChild("span", class_="ev-timer")
                         if start_block:
@@ -101,7 +103,14 @@ class Calendar:
 
                         body_block = event_block.find("div", class_="ev-match")
                         if body_block:
-                            _event.content = body_block.prettify()
+                            # look for times for the matches
+                            times = body_block.find("span", class_="ev-timer")
+                            if times is not None:
+                                for time in times:
+                                    if isinstance(time, Tag):
+                                        time.decompose()
+
+                            _event.content = body_block.get_text()
 
                         if _event.is_valid():
                             _events.append(_event)

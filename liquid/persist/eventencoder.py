@@ -1,7 +1,6 @@
 from json import JSONDecoder, JSONEncoder
 import json
 from liquid.model.event import Event
-from datetime import datetime, timedelta
 
 
 class EventEncoder(JSONEncoder, JSONDecoder):
@@ -11,7 +10,6 @@ class EventEncoder(JSONEncoder, JSONDecoder):
                 "_id": o.tl_id,
                 "start_time": o.start_time,
                 "end_time": o.end_time,
-                "icon": o.icon,
                 "type": o.type,
                 "category": o.category,
                 "stage": o.stage,
