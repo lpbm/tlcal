@@ -35,16 +35,11 @@ class Calendar:
     raw_content = ""
     debug = False
 
-    def __init__(self, rawContent, date=None, debug=False):
-        """
-        calendar: str
-        file: tempfile.NamedTemporaryFile
-        :return:
-        """
+    def __init__(self, raw_content, date=None, debug=False):
         if isinstance(date, datetime):
             self.date = date
 
-        self.raw_content = rawContent
+        self.raw_content = raw_content
         self.events = []
         self.debug = debug
 
@@ -54,20 +49,19 @@ class Calendar:
         """
         if len(self.raw_content) == 0:
             if self.debug:
-                print("Err: file-size 0")
+                print("Err: no content")
             return False
 
-        if self.debug:
-            print("processing content")
         soup = BeautifulSoup(self.raw_content, "html.parser")
 
         days_html_list = soup.find_all("div", class_="ev-feed")
         no_days = len(days_html_list)
 
         if self.debug:
-            print("\tFound %d days" % no_days)
+            print("Found %d days" % no_days)
 
         day = self.date
+        _events = []
         for day_html in days_html_list:
             start_day = int(day_html["data-day"])
             cur_day = day.replace(day=start_day)
@@ -75,24 +69,26 @@ class Calendar:
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
                 if self.debug:
-                    print("\t\t%s - %d events" % (cur_day.strftime("%Y-%m-%d"), len(event_blocks)))
+                    print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
 
-                _events = []
                 for event_block in event_blocks:
                     if event_block:
                         _event = event.Event()
                         if calendar == "sc2":
-                            _event.icon = Calendar.SC2IconMapper.get_data(Calendar.SC2IconMapper.get_icon_identifier(event_block))
+                            _event.type = Calendar.SC2IconMapper.get_icon_identifier(event_block)
+                            _event.icon = Calendar.SC2IconMapper.get_data(_event.icon)
                         else:
+                            _event.type = calendar
                             _event.icon = icon.Icon.get_data(calendar)
 
                         start_block = event_block.findChild("span", class_="ev-timer")
                         if start_block:
                             start_time = start_block.contents[0]
 
-                        _event.date_time = datetime.strptime(
+                        _event.start_time = datetime.strptime(
                             "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time), "%Y-%m-%d %H:%M"
                         )
+                        _event.estimate_duration()
 
                         title_div = event_block.find("div", class_="ev-ctrl")
                         if title_div:
@@ -112,4 +108,6 @@ class Calendar:
 
                 if len(_events) > 0:
                     self.events = _events
+        if self.debug:
+            print("Total events: %d" % len(self.events))
         return True

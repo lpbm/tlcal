@@ -12,19 +12,17 @@ __license__ = "MIT"
 
 week = {}
 
-# 2015-09-29
 start = datetime(year=2015, month=8, day=1)
 _types = ["sc2", "hrt", "dot", "lol"]
 
-wrapper = MongoWrapper()
+_debug = True
+
+wrapper = MongoWrapper(debug=_debug)
 
 status = {}
 for _type in _types:
     date = start
-    status[date.strftime("%Y%m%d")] = False
-    while liquid.load_from_date(_type, date, persist=wrapper):
-        print("Week: %s" % start.strftime("%W"))
-        status[date.strftime("%Y%m%d")] = True
-
+    while liquid.load_from_date(_type, date, persist=wrapper, debug=_debug):
+        print("Week: %s - processing %s" % (date.strftime("%W"), _type))
         date += timedelta(weeks=1)
 exit()
