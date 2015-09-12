@@ -1,12 +1,14 @@
 from datetime import datetime
 import re
 from bs4 import BeautifulSoup
-from liquid.model import event, calday
+from liquid.model import event
 from liquid.static import icon
-from liquid import debug as _debug
 
 
 class Calendar:
+    """
+    A class that parses html from the TL week calendar
+    """
 
     class SC2IconMapper(icon.Icon):
         icon_mappings = {
@@ -30,45 +32,53 @@ class Calendar:
                     key = int(m.group(0))
             return Calendar.SC2IconMapper.icon_mappings[key]
 
-    """
-    A class that parses html from the TL week calendar
-    """
+    raw_content = ""
+    debug = False
 
-    def __init__(self, file=None):
+    def __init__(self, rawContent, date=None, debug=False):
         """
         calendar: str
         file: tempfile.NamedTemporaryFile
         :return:
         """
-        self.raw_content = open(file.name, "r").read()
-        self.days = []
+        if isinstance(date, datetime):
+            self.date = date
+
+        self.raw_content = rawContent
+        self.events = []
+        self.debug = debug
 
     def load(self, calendar="sc2"):
         """
         :return bool
         """
         if len(self.raw_content) == 0:
+            if self.debug:
+                print("Err: file-size 0")
             return False
 
+        if self.debug:
+            print("processing content")
         soup = BeautifulSoup(self.raw_content, "html.parser")
 
         days_html_list = soup.find_all("div", class_="ev-feed")
         no_days = len(days_html_list)
-        if _debug:
+
+        if self.debug:
             print("\tFound %d days" % no_days)
 
-        day = datetime.now()
+        day = self.date
         for day_html in days_html_list:
             start_day = int(day_html["data-day"])
             cur_day = day.replace(day=start_day)
 
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
-                if _debug:
+                if self.debug:
                     print("\t\t%s - %d events" % (cur_day.strftime("%Y-%m-%d"), len(event_blocks)))
 
+                _events = []
                 for event_block in event_blocks:
-                    _events = []
                     if event_block:
                         _event = event.Event()
                         if calendar == "sc2":
@@ -90,7 +100,7 @@ class Calendar:
                             _event.tl_id = int(title_div.span["data-event-id"])
 
                         stage_block = event_block.find("div", class_="ev-stage")
-                        if stage_block:
+                        if stage_block and len(stage_block.contents) > 0:
                             _event.stage = stage_block.contents[0]
 
                         body_block = event_block.find("div", class_="ev-match")
@@ -101,7 +111,5 @@ class Calendar:
                             _events.append(_event)
 
                 if len(_events) > 0:
-                    self.days.append(
-                        calday.CalDay(date_=cur_day, events=_events)
-                    )
+                    self.events = _events
         return True

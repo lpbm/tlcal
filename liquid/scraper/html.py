@@ -1,6 +1,5 @@
 from datetime import datetime
 from requests import get, codes
-from liquid import debug as _debug
 
 
 class Html:
@@ -18,26 +17,26 @@ class Html:
         """
         """
         @staticmethod
-        def get_uri(calendar="sc2", by_week=True, by_month=False, date_=None):
+        def get_uri(calendar="sc2", by_week=True, by_month=False, date=None):
             if by_week:
                 view_by = "week"
             if by_month:
                 view_by = "month"
 
-            if date_ is None:
-                date_ = datetime.now()
+            if date is None:
+                date = datetime.now()
 
-            fmt = date_.strftime
+            fmt = date.strftime
             return Html.uris[calendar] + "?view=%s&year=%s&month=%s&day=%s" % (view_by, fmt("%Y"), fmt("%m"), fmt("%d"))
 
     @staticmethod
-    def get_calendar(self, calendar="sc2", by_week=True, by_month=False, date_=None):
+    def get_calendar(calendar="sc2", by_week=True, by_month=False, date=None, debug=False):
         """
         :return: str
         """
 
-        calendar_uri = Html.UriBuilder.get_uri(calendar, by_week, by_month, date_)
-        if _debug:
+        calendar_uri = Html.UriBuilder.get_uri(calendar, by_week, by_month, date)
+        if debug:
             print("Loading calendar from: %s" % calendar_uri)
 
         tl_response = get(calendar_uri)

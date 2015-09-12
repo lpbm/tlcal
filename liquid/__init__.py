@@ -1,8 +1,42 @@
+from tempfile import NamedTemporaryFile
+from datetime import datetime
+from liquid.parser.calendar import Calendar
+from liquid.scraper.html import Html
+from liquid.persist.mongowrapper import MongoWrapper
+import os
+
 __author__ = "Marius Orcsik <marius@habarnam.ro>"
 __version__ = "0.0.1"
 __copyright__ = "Copyright (c) 2015 Marius Orcsik"
 __license__ = "MIT"
 
-__all__ = ['debug']
+__all__ = ['debug', 'model', 'parser', 'scraper', 'persist']
 
-debug = False
+debug = True
+
+
+def load_from_date(type_="sc2", date=None, persist=None):
+    """
+    :type type_: str
+    :type date: datetime
+    :type persist: MongoWrapper
+    :return:
+    """
+    # file_prefix = "%s_%s_%s_" % (type_, date.strftime("%Y-%W"), datetime.utcnow().timestamp())
+    # file = NamedTemporaryFile("w+b", suffix=".cache.html", prefix=file_prefix, delete=False)
+    # file.write()
+    # file.close()
+    # os.remove(file.name)
+
+    content = Html.get_calendar(type_, by_week=True, date=date)
+
+    _parser = Calendar(content, date=date, debug=debug)
+    if _parser.load(type_) and len(_parser.events) > 0:
+        _events = _parser.events
+
+        if persist is not None:
+            persist.save(_events)
+
+        return True
+    else:
+        return False
