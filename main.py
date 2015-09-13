@@ -12,10 +12,10 @@ __license__ = "MIT"
 
 week = {}
 
-start = datetime(year=2015, month=8, day=1)
+start = datetime.now() - timedelta(weeks=1)
 _types = ["sc2", "hrt", "dot", "lol"]
 
-_debug = True
+_debug = False
 
 wrapper = MongoWrapper(debug=_debug)
 
