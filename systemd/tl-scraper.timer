@@ -1,0 +1,5 @@
+[Unit]
+Description=Run tl-scraper.service every 10 minutes
+
+[Timer]
+OnCalendar=*:0/59

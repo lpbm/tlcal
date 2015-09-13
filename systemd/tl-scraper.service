@@ -1,0 +1,12 @@
+[Unit]
+Description=A way to scrape tl calendars
+After=network.target
+
+[Service]
+Type=simple
+SyslogLevel=err
+
+ExecStart=/usr/bin/python /home/habarnam/workspace/tlcal/main.py
+
+[Install]
+WantedBy=multi-user.target
