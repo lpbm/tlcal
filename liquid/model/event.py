@@ -44,6 +44,20 @@ class Event:
             (self.tl_id > 0)
         )
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return (
+                self.tl_id == other.tl_id and
+                self.start_time == other.start_time and
+                self.end_time == other.end_time and
+                self.type == other.type and
+                self.category == other.category and
+                self.stage == other.stage and
+                self.content == other.content
+            )
+
     def __repr__(self):
         return self.__str__()
 
