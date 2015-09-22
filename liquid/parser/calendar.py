@@ -90,7 +90,6 @@ class Calendar:
                         _event.start_time = datetime.strptime(
                             "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time), "%Y-%m-%d %H:%M"
                         )
-                        _event.estimate_duration()
 
                         title_div = event_block.find("div", class_="ev-ctrl")
                         if title_div:
@@ -111,6 +110,7 @@ class Calendar:
                                         time.decompose()
 
                             _event.content = body_block.get_text()
+                            _event.estimate_duration()
 
                         if _event.is_valid():
                             _events.append(_event)
