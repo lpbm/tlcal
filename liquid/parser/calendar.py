@@ -109,7 +109,7 @@ class Calendar:
                                     if isinstance(time, Tag):
                                         time.decompose()
 
-                            _event.content = body_block.get_text()
+                            _event.content = body_block.get_text().strip("\n")
                             _event.estimate_duration()
 
                         if _event.is_valid():
