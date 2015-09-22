@@ -17,6 +17,7 @@ class MongoWrapper:
 
         success = {"inserts": 0, "updates": 0}
         failed = {"inserts": 0, "updates": 0}
+        skipped = 0
 
         for _event in _events:
             if isinstance(_event, Event):
@@ -29,15 +30,19 @@ class MongoWrapper:
                     else:
                         failed['inserts'] += 1
                 else:
-                    result = self.db.events.replace_one(original, encoder.encode(_event))
-                    """ @type : pymongo.results.UpdateResult """
-                    if result.modified_count > 0:
-                        success['updates'] += 1
+                    original_event = encoder.decode(original)
+                    if original_event != _event:
+                        result = self.db.events.replace_one(original, encoder.encode(_event))
+                        """ @type : pymongo.results.UpdateResult """
+                        if result.modified_count > 0:
+                            success['updates'] += 1
+                        else:
+                            failed['updates'] += 1
                     else:
-                        failed['updates'] += 1
+                        skipped += 1
 
         if self.debug:
-            print("\tSuccess: Added %d - Updated %d" % (success["inserts"], success["updates"]))
+            print("\tSuccess: Added %d - Updated %d - Skipped %d" % (success["inserts"], success["updates"], skipped))
             print("\tFailures: Added %d - Updated %d" % (failed["inserts"], failed["updates"]))
 
         return True
