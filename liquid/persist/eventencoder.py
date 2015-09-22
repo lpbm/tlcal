@@ -17,18 +17,17 @@ class EventEncoder(JSONEncoder, JSONDecoder):
             }
         return {}
 
-    def decode(self, s):
-        dict = json.loads(s)
-
+    def decode(self, dict):
         # start_time = datetime.strptime(dict["start_time"], "")
-        o = Event();
+        o = Event()
 
-        o.tl_id = dict["_id"];
-        o.start_time = dict["start_time"];
-        o.end_time = dict["end_time"];
-        o.icon = dict["icon"];
-        o.type = dict["type"];
-        o.category = dict["category"];
-        o.stage = dict["stage"];
-        o.content = dict["content"];
+        o.tl_id = dict["_id"]
+        o.start_time = dict["start_time"]
+        o.end_time = dict["end_time"]
+        # o.icon = dict["icon"]
+        o.type = dict["type"]
+        o.category = dict["category"]
+        o.stage = dict["stage"]
+        o.content = dict["content"]
+
         return o
