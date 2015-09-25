@@ -29,6 +29,7 @@ class EventEncoder(JSONEncoder, JSONDecoder):
         o.category = dict["category"]
         o.stage = dict["stage"]
         o.content = dict["content"]
-        o.links = dict["links"]
+        if "links" in dict:
+            o.links = dict["links"]
 
         return o
