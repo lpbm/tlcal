@@ -1,8 +1,8 @@
 from datetime import datetime
-import re
 from bs4 import BeautifulSoup, Tag
 from liquid.model import event
-from liquid.static import icon
+from liquid.scraper.html import Html
+import re
 
 
 class Calendar:
@@ -10,8 +10,8 @@ class Calendar:
     A class that parses html from the TL week calendar
     """
 
-    class SC2IconMapper(icon.Icon):
-        icon_mappings = {
+    class EventMapper:
+        event_types = {
             0: "unk",
             1: "sc2",
             2: "brw",
@@ -20,20 +20,21 @@ class Calendar:
             5: "sma"
         }
         """
-        A class to map the icons from TL events
+        A class get the event type
         """
         @staticmethod
-        def get_icon_identifier(event_tag):
+        def get_event_type(event_tag):
             key = "0"
             element = event_tag.findChild("span", class_="league-sprite-small")
             if element:
                 m = re.search('\d+', element["style"])
                 if m:
                     key = int(m.group(0))
-            return Calendar.SC2IconMapper.icon_mappings[key]
+            return Calendar.EventMapper.event_types[key]
 
     raw_content = ""
     debug = False
+    type = ""
 
     def __init__(self, raw_content, date=None, debug=False):
         if isinstance(date, datetime):
@@ -47,6 +48,7 @@ class Calendar:
         """
         :return bool
         """
+        self.type = calendar
         if len(self.raw_content) == 0:
             if self.debug:
                 print("Err: no content")
@@ -72,14 +74,14 @@ class Calendar:
 
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
-                if self.debug:
-                    print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
+                # if self.debug:
+                #     print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
 
                 for event_block in event_blocks:
                     if event_block:
                         _event = event.Event()
                         if calendar == "sc2":
-                            _event.type = Calendar.SC2IconMapper.get_icon_identifier(event_block)
+                            _event.type = Calendar.EventMapper.get_event_type(event_block)
                         else:
                             _event.type = calendar
 
@@ -119,4 +121,32 @@ class Calendar:
                     self.events = _events
         if self.debug:
             print("Total events: %d" % len(self.events))
+
         return True
+
+    def load_event_info(self, event_content):
+        """
+        :tl_id: int
+        :return:
+        """
+        if len(event_content) == 0:
+            if self.debug:
+                print("Err: no content")
+            return False
+        links = {}
+
+        soup = BeautifulSoup(event_content, "html.parser")
+        link_blocks = soup.find("div", class_="evc-link")
+
+        for link_block in link_blocks:
+            if isinstance(link_block, Tag):
+                name = link_block.div.text
+                link = link_block.find("a")
+                href = link["href"]
+
+                if "forum" in href:
+                    href = Html.UriBuilder.get_uri(self.type) + href
+
+                links[name] = href
+
+        return links

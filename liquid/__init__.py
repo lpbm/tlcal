@@ -30,7 +30,14 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False):
     content = Html.get_calendar(type_, by_week=True, date=date, debug=debug)
 
     _parser = Calendar(content, date=date, debug=debug)
+
     if _parser.load(type_) and len(_parser.events) > 0:
+        if debug:
+            print("Loading information for event:", end=" ", flush=True)
+        for event in _parser.events:
+            event_content = Html.get_event(type_, event.tl_id)
+            event.links = _parser.load_event_info(event_content)
+
         persist.save(_parser.events)
         return True
     else:

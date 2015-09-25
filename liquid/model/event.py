@@ -9,12 +9,12 @@ class Event:
     tl_id = 0
     start_time = None
     end_time = None
-    icon = ""
     type = ""
     category = ""
     stage = ""
     content = ""
     match_count = 1
+    links = {}
 
     def __init__(self):
         """

@@ -14,6 +14,7 @@ class EventEncoder(JSONEncoder, JSONDecoder):
                 "category": o.category,
                 "stage": o.stage,
                 "content": o.content,
+                "links": o.links
             }
         return {}
 
@@ -24,10 +25,10 @@ class EventEncoder(JSONEncoder, JSONDecoder):
         o.tl_id = dict["_id"]
         o.start_time = dict["start_time"]
         o.end_time = dict["end_time"]
-        # o.icon = dict["icon"]
         o.type = dict["type"]
         o.category = dict["category"]
         o.stage = dict["stage"]
         o.content = dict["content"]
+        o.links = dict["links"]
 
         return o
