@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
-import liquid
 from liquid.persist.mongowrapper import MongoWrapper
+from liquid.persist.outputwrapper import OutputWrapper
+from liquid import load_from_date
+from argparse import ArgumentParser
+from sys import argv
 
 """
 """
@@ -12,17 +15,35 @@ __license__ = "MIT"
 
 week = {}
 
-start = datetime.now() - timedelta(weeks=1)
-_types = ["sc2", "hrt", "dot", "lol"]
+default_types = ["sc2", "hrt", "dot", "lol"]
+default_start = datetime.now() - timedelta(weeks=1)
 
-_debug = False
+parser = ArgumentParser(prog="tlscraper")
+parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
+                    default=default_start.strftime("%Y-%m-%d"))
+parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
+parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
+parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
+                    default=default_types[0], choices=default_types, metavar="sc2")
 
-wrapper = MongoWrapper(debug=_debug)
+args = parser.parse_args()
+if len(argv) == 1:
+    parser.print_help()
+    exit(1)
 
-status = {}
-for _type in _types:
+debug = args.debug
+start = datetime.strptime(args.start_date, "%Y-%m-%d")
+types = args.calendar
+dry_run = args.dry_run
+
+if dry_run:
+    wrapper = OutputWrapper(debug=debug)
+else:
+    wrapper = MongoWrapper(debug=debug)
+
+for _type in types:
     date = start
-    while liquid.load_from_date(_type, date, persist=wrapper, debug=_debug):
-        print("Week: %s - processing %s" % (date.strftime("%W"), _type))
+    while load_from_date(_type, date, persist=wrapper, debug=debug):
+        # print("Week: %s - processing %s" % (date.strftime("%W"), _type))
         date += timedelta(weeks=1)
 exit()
