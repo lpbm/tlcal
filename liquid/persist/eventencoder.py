@@ -14,7 +14,8 @@ class EventEncoder(JSONEncoder, JSONDecoder):
                 "category": o.category,
                 "stage": o.stage,
                 "content": o.content,
-                "links": o.links
+                "links": o.links,
+                "canceled": o.canceled
             }
         return {}
 
@@ -31,5 +32,7 @@ class EventEncoder(JSONEncoder, JSONDecoder):
         o.content = dict["content"]
         if "links" in dict:
             o.links = dict["links"]
+        if "canceled" in dict:
+            o.canceled = dict["canceled"]
 
         return o

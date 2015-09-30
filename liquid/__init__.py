@@ -39,9 +39,6 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False):
             event_content = Html.get_event(type_, event.tl_id, debug=debug)
             event.links = _parser.load_event_info(event_content)
 
-        if debug:
-            print("")
-
         persist.save(_parser.events)
         return True
     else:

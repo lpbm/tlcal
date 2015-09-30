@@ -15,6 +15,7 @@ class Event:
     content = ""
     match_count = 1
     links = {}
+    canceled = False
 
     def __init__(self):
         """

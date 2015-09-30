@@ -1,25 +1,47 @@
 from pymongo import MongoClient
+from pymongo.database import Database
+from pymongo.errors import ConnectionFailure
 from liquid.persist.eventencoder import EventEncoder
 from liquid.model.event import Event
+from datetime import datetime, timedelta
 
 
 class MongoWrapper:
     def __init__(self, debug=False):
-        client = MongoClient('mongodb://localhost:27017/')
-        self.db = client.tlcalendar
+        try:
+            self.client = MongoClient('mongodb://localhost:27017/')
+        except ConnectionFailure:
+            return False
+
+        self.db = self.client.tlcalendar
         self.debug = debug
 
     def save(self, _events):
         encoder = EventEncoder()
 
-        if self.debug:
-            print("Begin MongoDB persist:")
-
         success = {"inserts": 0, "updates": 0}
         failed = {"inserts": 0, "updates": 0}
         skipped = 0
+        deleted = 0
+
+        if not isinstance(self.db, Database):
+            print("Could not persist to MongoDB")
+            return False
+
+        if self.debug:
+            print("Begin MongoDB persist:")
+
+        min_date = datetime.now() + timedelta(weeks=12)
+        ids = []
+        types = []
+        deleted = 0
 
         for _event in _events:
+            ids.append(_event.tl_id)
+            min_date = min(_event.start_time, min_date)
+            if _event.type not in types:
+                types.append(_event.type)
+
             if isinstance(_event, Event):
                 original = self.db.events.find_one({"_id": _event.tl_id})
                 if original is None:
@@ -41,8 +63,16 @@ class MongoWrapper:
                     else:
                         skipped += 1
 
-        if self.debug:
-            print("\tSuccess: Added %d - Updated %d - Skipped %d" % (success["inserts"], success["updates"], skipped))
-            print("\tFailures: Added %d - Updated %d" % (failed["inserts"], failed["updates"]))
+        max_date = min_date + timedelta(weeks=1)
+        what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
+        print(what)
+        cursor = self.db.events.find(what)
+        for db_event in cursor:
+            self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
+            deleted += 1
 
+        if self.debug:
+            print("\tSuccess: Added %d - Updated %d - Skipped %d - Deleted %d" %
+                  (success["inserts"], success["updates"], skipped, deleted))
+            print("\tFailures: Added %d - Updated %d" % (failed["inserts"], failed["updates"]))
         return True

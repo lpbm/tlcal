@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup, Tag
 from liquid.model import event
 from liquid.scraper.html import Html
@@ -59,9 +59,6 @@ class Calendar:
         days_html_list = soup.find_all("div", class_="ev-feed")
         no_days = len(days_html_list)
 
-        if self.debug:
-            print("Found %d days" % no_days)
-
         day = datetime(
             year=self.date.year,
             month=self.date.month,
@@ -120,6 +117,8 @@ class Calendar:
                 if len(_events) > 0:
                     self.events = _events
         if self.debug:
+            end_day = day + timedelta(days=no_days)
+            print("Period: %s - %s" % (day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d")))
             print("Total events: %d" % len(self.events))
 
         return True
