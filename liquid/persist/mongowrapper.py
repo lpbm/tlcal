@@ -65,7 +65,6 @@ class MongoWrapper:
 
         max_date = min_date + timedelta(weeks=1)
         what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
-        print(what)
         cursor = self.db.events.find(what)
         for db_event in cursor:
             self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
