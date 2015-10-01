@@ -11,7 +11,7 @@ __license__ = "MIT"
 __all__ = ['model', 'parser', 'scraper', 'persist']
 
 
-def load_from_date(type_="sc2", date=None, persist=None, debug=False):
+def load_from_date(type_="sc2", date=None, persist=None, debug=False, load_event_data=False):
     """
     :type type_: str
     :type date: datetime
@@ -35,9 +35,10 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False):
         if debug:
             print("Loading information for event:", end=" ", flush=True)
 
-        for event in _parser.events:
-            event_content = Html.get_event(type_, event.tl_id, debug=debug)
-            event.links = _parser.load_event_info(event_content)
+        if load_event_data:
+            for event in _parser.events:
+                event_content = Html.get_event(type_, event.tl_id, debug=debug)
+                event.links = _parser.load_event_info(event_content)
 
         persist.save(_parser.events)
         return True
