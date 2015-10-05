@@ -1,0 +1,58 @@
+from datetime import datetime, timedelta
+from liquid.persist.mongowrapper import MongoWrapper
+from liquid.persist.eventencoder import EventEncoder
+from liquid.persist.outputwrapper import OutputWrapper
+from liquid import load_event_data
+from argparse import ArgumentParser
+from sys import argv
+
+"""
+"""
+
+__author__ = "Marius Orcsik <marius@habarnam.ro>"
+__version__ = "0.0.1"
+__copyright__ = "Copyright (c) 2015 Marius Orcsik"
+__license__ = "MIT"
+
+week = {}
+
+default_types = ["sc2", "hrt", "dot", "lol"]
+default_start = datetime.now() - timedelta(days=1)
+
+parser = ArgumentParser(prog="tlevents")
+parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
+                    default=default_start.strftime("%Y-%m-%d"))
+parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
+parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
+parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
+                    default=default_types[0], choices=default_types, metavar="sc2")
+
+args = parser.parse_args()
+if len(argv) == 1:
+    parser.print_help()
+    exit(1)
+
+debug = args.debug
+start = datetime.strptime(args.start_date, "%Y-%m-%d")
+types = args.calendar
+dry_run = args.dry_run
+
+wrapper = MongoWrapper(debug=debug)
+
+encoder = EventEncoder()
+
+date = start
+for _type in types:
+    what = {"type": _type, "start_time": {"$gte": start, "$lt": start + timedelta(days=1)}}
+    while wrapper.db.events.count(what) > 0:
+        _events = []
+        cursor = wrapper.db.events.find(what)
+        for db_event in cursor:
+            _events.append(encoder.decode(db_event))
+
+        load_event_data(_events, persist=wrapper, debug=debug)
+        date += timedelta(days=1)
+        what["start_time"]["$gte"] = date
+        what["start_time"]["$lt"] = date + timedelta(days=1)
+
+exit()

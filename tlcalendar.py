@@ -44,6 +44,5 @@ else:
 for _type in types:
     date = start
     while load_from_date(_type, date, persist=wrapper, debug=debug):
-        # print("Week: %s - processing %s" % (date.strftime("%W"), _type))
         date += timedelta(weeks=1)
 exit()

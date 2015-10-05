@@ -11,7 +11,7 @@ __license__ = "MIT"
 __all__ = ['model', 'parser', 'scraper', 'persist']
 
 
-def load_from_date(type_="sc2", date=None, persist=None, debug=False, load_event_data=False):
+def load_from_date(type_="sc2", date=None, persist=None, debug=False):
     """
     :type type_: str
     :type date: datetime
@@ -27,20 +27,28 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False, load_event
     if persist is None:
         return False
 
-    content = Html.get_calendar(type_, by_week=True, date=date, debug=debug)
+    raw_content = Html.get_calendar(type_, by_week=True, date=date, debug=debug)
 
-    _parser = Calendar(content, date=date, debug=debug)
-
-    if _parser.load(type_) and len(_parser.events) > 0:
+    _parser = Calendar(date=date, debug=debug)
+    if _parser.load_calendar(type_, raw_content) and len(_parser.events) > 0:
         if debug:
             print("Loading information for event:", end=" ", flush=True)
-
-        if load_event_data:
-            for event in _parser.events:
-                event_content = Html.get_event(type_, event.tl_id, debug=debug)
-                event.links = _parser.load_event_info(event_content)
 
         persist.save(_parser.events)
         return True
     else:
         return False
+
+
+def load_event_data(_events, persist=None, debug=False):
+    if persist is None:
+        return False
+
+    _parser = Calendar(date=None, debug=debug)
+
+    for event in _events:
+        event_content = Html.get_event(event.type, event.tl_id, debug=debug)
+        event.links = _parser.load_event_info(event_content, event.type)
+
+    persist.save(_events)
+    return True

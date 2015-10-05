@@ -87,6 +87,7 @@ class Html:
         tl_response = post(event_uri, post_data)
         if tl_response.status_code == codes.ok and tl_response.headers.get('content-type') == "application/json":
             decoded_response = json.loads(tl_response.content.decode(encoding="UTF-8"))
-            html = decoded_response["html"]
+            if "html" in decoded_response:
+                html = decoded_response["html"]
 
         return html

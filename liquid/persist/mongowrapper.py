@@ -16,7 +16,7 @@ class MongoWrapper:
         self.db = self.client.tlcalendar
         self.debug = debug
 
-    def save(self, _events):
+    def save(self, _events, delete=True):
         encoder = EventEncoder()
 
         success = {"inserts": 0, "updates": 0}
@@ -32,13 +32,14 @@ class MongoWrapper:
             print("Begin MongoDB persist:")
 
         min_date = datetime.now() + timedelta(weeks=12)
+        max_date = datetime.strptime('1970-01-01', '%Y-%m-%d')
         ids = []
         types = []
-        deleted = 0
 
         for _event in _events:
             ids.append(_event.tl_id)
             min_date = min(_event.start_time, min_date)
+            max_date = max(_event.start_time, max_date)
             if _event.type not in types:
                 types.append(_event.type)
 
@@ -63,12 +64,12 @@ class MongoWrapper:
                     else:
                         skipped += 1
 
-        max_date = min_date + timedelta(weeks=1)
-        what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
-        cursor = self.db.events.find(what)
-        for db_event in cursor:
-            self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
-            deleted += 1
+        if delete:
+            what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
+            cursor = self.db.events.find(what)
+            for db_event in cursor:
+                self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
+                deleted += 1
 
         if self.debug:
             print("\tSuccess: Added %d - Updated %d - Skipped %d - Deleted %d" %

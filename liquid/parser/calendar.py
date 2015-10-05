@@ -32,29 +32,27 @@ class Calendar:
                     key = int(m.group(0))
             return Calendar.EventMapper.event_types[key]
 
-    raw_content = ""
     debug = False
     type = ""
 
-    def __init__(self, raw_content, date=None, debug=False):
+    def __init__(self, date=None, debug=False):
         if isinstance(date, datetime):
             self.date = date
 
-        self.raw_content = raw_content
         self.events = []
         self.debug = debug
 
-    def load(self, calendar="sc2"):
+    def load_calendar(self, calendar="sc2", raw_content=""):
         """
         :return bool
         """
         self.type = calendar
-        if len(self.raw_content) == 0:
+        if len(raw_content) == 0:
             if self.debug:
                 print("Err: no content")
             return False
 
-        soup = BeautifulSoup(self.raw_content, "html.parser")
+        soup = BeautifulSoup(raw_content, "html.parser")
 
         days_html_list = soup.find_all("div", class_="ev-feed")
         no_days = len(days_html_list)
@@ -123,7 +121,7 @@ class Calendar:
 
         return True
 
-    def load_event_info(self, event_content):
+    def load_event_info(self, event_content, calendar="sc2"):
         """
         :tl_id: int
         :return:
@@ -144,7 +142,7 @@ class Calendar:
                 href = link["href"]
 
                 if "forum" in href:
-                    href = Html.UriBuilder.get_uri(self.type) + href
+                    href = Html.UriBuilder.get_uri(calendar) + href
 
                 links[name] = href
 

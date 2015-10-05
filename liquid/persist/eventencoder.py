@@ -19,20 +19,20 @@ class EventEncoder(JSONEncoder, JSONDecoder):
             }
         return {}
 
-    def decode(self, dict):
+    def decode(self, s):
         # start_time = datetime.strptime(dict["start_time"], "")
         o = Event()
 
-        o.tl_id = dict["_id"]
-        o.start_time = dict["start_time"]
-        o.end_time = dict["end_time"]
-        o.type = dict["type"]
-        o.category = dict["category"]
-        o.stage = dict["stage"]
-        o.content = dict["content"]
-        if "links" in dict:
-            o.links = dict["links"]
-        if "canceled" in dict:
-            o.canceled = dict["canceled"]
+        o.tl_id = s["_id"]
+        o.start_time = s["start_time"]
+        o.end_time = s["end_time"]
+        o.type = s["type"]
+        o.category = s["category"]
+        o.stage = s["stage"]
+        o.content = s["content"]
+        if "links" in s:
+            o.links = s["links"]
+        if "canceled" in s:
+            o.canceled = s["canceled"]
 
         return o
