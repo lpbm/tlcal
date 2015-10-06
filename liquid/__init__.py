@@ -31,11 +31,7 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False):
 
     _parser = Calendar(date=date, debug=debug)
     if _parser.load_calendar(type_, raw_content) and len(_parser.events) > 0:
-        if debug:
-            print("Loading information for event:", end=" ", flush=True)
-
-        persist.save(_parser.events)
-        return True
+        return persist.save(_parser.events)
     else:
         return False
 

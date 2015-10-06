@@ -22,7 +22,6 @@ class MongoWrapper:
         success = {"inserts": 0, "updates": 0, "deleted": 0}
         failed = {"inserts": 0, "updates": 0, "deleted": 0}
         skipped = 0
-        deleted = 0
 
         if not isinstance(self.db, Database):
             print("Could not persist to MongoDB")
