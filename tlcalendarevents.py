@@ -34,6 +34,7 @@ if len(argv) == 1:
 
 debug = args.debug
 start = datetime.strptime(args.start_date, "%Y-%m-%d")
+days_delta = 1
 types = args.calendar
 dry_run = args.dry_run
 
@@ -42,17 +43,37 @@ wrapper = MongoWrapper(debug=debug)
 encoder = EventEncoder()
 
 date = start
+date_end = start + timedelta(days=days_delta)
 for _type in types:
-    what = {"type": _type, "start_time": {"$gte": start, "$lt": start + timedelta(days=1)}}
-    while wrapper.db.events.count(what) > 0:
+    while True:
         _events = []
+        what = {"type": _type, "start_time": {"$gte": date, "$lt": date_end}}
+        count_events = wrapper.db.events.count(what)
+        if count_events == 0:
+            if days_delta <= 7:
+                days_delta += 2
+            else:
+                break
+        else:
+            if days_delta > 2:
+                days_delta = 1
+
+        if debug:
+            print("Date %s + %d days" % (date.strftime("%Y-%m-%d"), days_delta), flush=False)
+
         cursor = wrapper.db.events.find(what)
         for db_event in cursor:
             _events.append(encoder.decode(db_event))
 
+        if debug:
+            print("... found: %d" % len(_events))
+
         load_event_data(_events, persist=wrapper, debug=debug)
-        date += timedelta(days=1)
+
+        date = what["start_time"]["$lt"]
+        date_end = date + timedelta(days=3)
+
         what["start_time"]["$gte"] = date
-        what["start_time"]["$lt"] = date + timedelta(days=1)
+        what["start_time"]["$lt"] = date_end
 
 exit()
