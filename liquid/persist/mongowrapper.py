@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from pymongo.database import Database
 from pymongo.errors import ConnectionFailure
 from liquid.persist.eventencoder import EventEncoder
@@ -53,6 +53,7 @@ class MongoWrapper:
                     else:
                         failed['inserts'] += 1
                 else:
+                    _event.canceled = False
                     original_event = encoder.decode(original)
                     if original_event != _event:
                         result = self.db.events.replace_one(original, encoder.encode(_event))
@@ -68,8 +69,9 @@ class MongoWrapper:
             what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)
             for db_event in cursor:
-                result = self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
-                if result.modified_count > 0:
+                canceled = self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}},
+                                                            return_document=ReturnDocument.AFTER)
+                if canceled["canceled"]:
                     success['deleted'] += 1
                 else:
                     failed['deleted'] += 1
