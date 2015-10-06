@@ -19,8 +19,8 @@ class MongoWrapper:
     def save(self, _events, delete=True):
         encoder = EventEncoder()
 
-        success = {"inserts": 0, "updates": 0}
-        failed = {"inserts": 0, "updates": 0}
+        success = {"inserts": 0, "updates": 0, "deleted": 0}
+        failed = {"inserts": 0, "updates": 0, "deleted": 0}
         skipped = 0
         deleted = 0
 
@@ -68,11 +68,14 @@ class MongoWrapper:
             what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)
             for db_event in cursor:
-                self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
-                deleted += 1
+                result = self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}})
+                if result.modified_count > 0:
+                    success['deleted'] += 1
+                else:
+                    failed['deleted'] += 1
 
         if self.debug:
-            print("\tSuccess: Added %d - Updated %d - Skipped %d - Deleted %d" %
-                  (success["inserts"], success["updates"], skipped, deleted))
-            print("\tFailures: Added %d - Updated %d" % (failed["inserts"], failed["updates"]))
+            print("SKIP: %d" % skipped)
+            print("  OK: INS:%d UPD:%d DEL:%d" % (success["inserts"], success["updates"], success["deleted"]))
+            print(" NOK: INS:%d UPD:%d DEL:%d" % (failed["inserts"], failed["updates"], failed["deleted"]))
         return True

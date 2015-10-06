@@ -44,8 +44,15 @@ encoder = EventEncoder()
 
 date = start
 date_end = start + timedelta(days=days_delta)
+
 for _type in types:
+    if debug:
+        print("Loading events from calendar %s" % _type)
+
     while True:
+        if debug:
+            print("Date %s + %d days" % (date.strftime("%Y-%m-%d"), days_delta), end=" ", flush=True)
+
         _events = []
         what = {"type": _type, "start_time": {"$gte": date, "$lt": date_end}}
         count_events = wrapper.db.events.count(what)
@@ -58,9 +65,6 @@ for _type in types:
             if days_delta > 2:
                 days_delta = 1
 
-        if debug:
-            print("Date %s + %d days" % (date.strftime("%Y-%m-%d"), days_delta), flush=False)
-
         cursor = wrapper.db.events.find(what)
         for db_event in cursor:
             _events.append(encoder.decode(db_event))
@@ -68,10 +72,11 @@ for _type in types:
         if debug:
             print("... found: %d" % len(_events))
 
-        load_event_data(_events, persist=wrapper, debug=debug)
+        if len(_events) > 0:
+            load_event_data(_events, persist=wrapper, debug=debug)
 
         date = what["start_time"]["$lt"]
-        date_end = date + timedelta(days=3)
+        date_end = date + timedelta(days=days_delta)
 
         what["start_time"]["$gte"] = date
         what["start_time"]["$lt"] = date_end

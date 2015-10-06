@@ -46,9 +46,12 @@ def load_event_data(_events, persist=None, debug=False):
 
     _parser = Calendar(date=None, debug=debug)
 
+    if debug:
+        print("Loading events:", end=" ", flush=True)
     for event in _events:
         event_content = Html.get_event(event.type, event.tl_id, debug=debug)
         event.links = _parser.load_event_info(event_content, event.type)
 
-    persist.save(_events)
-    return True
+    if debug:
+        print()
+    return persist.save(_events)
