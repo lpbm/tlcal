@@ -1,5 +1,5 @@
 [Unit]
-Description=Event scraper for TL
+Description=Event scraper for Team Liquid
 After=network.target
 
 [Service]
@@ -8,5 +8,4 @@ SyslogLevel=err
 
 ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tlcalendarevents.py --calendar sc2 brw csg hot sma dot lol hrt 
 
-[Install]
-WantedBy=multi-user.target
+

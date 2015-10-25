@@ -1,5 +1,5 @@
 [Unit]
-Description=Calendar scraper for TL 
+Description=Calendar scraper for Team Liquid
 After=network.target
 
 [Service]
@@ -8,5 +8,3 @@ SyslogLevel=err
 
 ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tlcalendar.py --calendar sc2 brw csg hot sma dot lol hrt 
 
-[Install]
-WantedBy=multi-user.target
