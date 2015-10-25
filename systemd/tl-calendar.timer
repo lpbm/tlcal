@@ -1,0 +1,5 @@
+[Unit]
+Description=Run tl-calendar.service every 17 minutes
+
+[Timer]
+OnCalendar=*:12/17
