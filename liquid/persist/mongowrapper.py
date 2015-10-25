@@ -1,6 +1,6 @@
 from pymongo import MongoClient, ReturnDocument
 from pymongo.database import Database
-from pymongo.errors import ConnectionFailure
+from pymongo.errors import PyMongoError, ConnectionFailure
 from liquid.persist.eventencoder import EventEncoder
 from liquid.model.event import Event
 from datetime import datetime, timedelta
@@ -8,13 +8,14 @@ from datetime import datetime, timedelta
 
 class MongoWrapper:
     def __init__(self, debug=False):
-        try:
-            self.client = MongoClient('mongodb://localhost:27017/')
-        except ConnectionFailure:
-            return False
-
-        self.db = self.client.tlcalendar
         self.debug = debug
+        try:
+            self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=300')
+            self.db = self.client.tlcalendar
+            self.db.events.count()
+        except PyMongoError:
+            self.client = None
+            self.db = None
 
     def save(self, _events, delete=True):
         encoder = EventEncoder()
@@ -31,7 +32,7 @@ class MongoWrapper:
             print("Begin MongoDB persist:")
 
         min_date = datetime.now() + timedelta(weeks=12)
-        max_date = datetime.strptime('1970-01-01', '%Y-%m-%d')
+        max_date = datetime.strptime('1970-01-01 00:00:00', '%Y-%m-%d %H:%M:%S')
         ids = []
         types = []
 
@@ -64,12 +65,13 @@ class MongoWrapper:
                     else:
                         skipped += 1
 
+        print(ids)
         if delete:
             what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)
             for db_event in cursor:
                 canceled = self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}},
-                                                            return_document=ReturnDocument.AFTER)
+                                                              return_document=ReturnDocument.AFTER)
                 if canceled["canceled"]:
                     success['deleted'] += 1
                 else:
@@ -78,5 +80,6 @@ class MongoWrapper:
         if self.debug:
             print("SKIP: %d" % skipped)
             print("  OK: INS:%d UPD:%d DEL:%d" % (success["inserts"], success["updates"], success["deleted"]))
-            print(" NOK: INS:%d UPD:%d DEL:%d" % (failed["inserts"], failed["updates"], failed["deleted"]))
+            if (failed["inserts"] + failed["updates"] + failed["deleted"]) > 0:
+                print(" NOK: INS:%d UPD:%d DEL:%d" % (failed["inserts"], failed["updates"], failed["deleted"]))
         return True
