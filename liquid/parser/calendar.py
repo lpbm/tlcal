@@ -72,7 +72,6 @@ class Calendar:
                 start_month += 1
             cur_day = day.replace(day=start_day, month=start_month)
 
-
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
                 # if self.debug:

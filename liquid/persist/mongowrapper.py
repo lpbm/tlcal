@@ -1,6 +1,6 @@
 from pymongo import MongoClient, ReturnDocument
 from pymongo.database import Database
-from pymongo.errors import PyMongoError, ConnectionFailure
+from pymongo.errors import PyMongoError
 from liquid.persist.eventencoder import EventEncoder
 from liquid.model.event import Event
 from datetime import datetime, timedelta
@@ -65,7 +65,6 @@ class MongoWrapper:
                     else:
                         skipped += 1
 
-        print(ids)
         if delete:
             what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)

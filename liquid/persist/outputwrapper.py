@@ -12,7 +12,7 @@ class OutputWrapper:
         for _event in _events:
             if isinstance(_event, Event):
                 print("[%s] %s: %s" % (_event.type.upper(), _event.category, _event.stage))
-                print("Begin time: %s" % (_event.start_time))
+                print("Begin time: %s" % _event.start_time)
                 for _link in _event.links:
                     print("\t%s - %s" % (_link,  _event.links[_link]))
 
