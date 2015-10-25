@@ -44,7 +44,9 @@ class Calendar:
 
     def load_calendar(self, calendar="sc2", raw_content=""):
         """
-        :return bool
+        :param calendar: string
+        :param raw_content: string
+        :return: bool
         """
         self.type = calendar
         if len(raw_content) == 0:
@@ -65,7 +67,11 @@ class Calendar:
         _events = []
         for day_html in days_html_list:
             start_day = int(day_html["data-day"])
-            cur_day = day.replace(day=start_day)
+            start_month = day.month
+            if start_day < day.day:
+                start_month += 1
+            cur_day = day.replace(day=start_day, month=start_month)
+
 
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
