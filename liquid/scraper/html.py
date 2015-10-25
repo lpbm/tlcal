@@ -1,5 +1,5 @@
 from datetime import datetime
-from requests import get, post, codes
+from requests import get, post, codes, exceptions
 import json
 
 
@@ -9,6 +9,10 @@ class Html:
 
     base_uris = {
         "sc2": "http://www.teamliquid.net",
+        "brw": "http://www.teamliquid.net",
+        "csg": "http://www.teamliquid.net",
+        "hot": "http://www.teamliquid.net",
+        "sma": "http://www.teamliquid.net",
         "hrt": "http://www.liquidhearth.com",
         "dot": "http://www.liquiddota.com",
         "lol": "http://www.liquidlegends.net"
@@ -16,6 +20,10 @@ class Html:
 
     calendar_path = {
         "sc2": "/calendar",
+        "brw": "/calendar",
+        "csg": "/calendar",
+        "hot": "/calendar",
+        "sma": "/calendar",
         "hrt": "/calendar",
         "dot": "/calendar",
         "lol": "/calendar"
@@ -23,9 +31,21 @@ class Html:
 
     event_path = {
         "sc2": "/calendar/manage",
+        "brw": "/calendar/manage",
+        "csg": "/calendar/manage",
+        "hot": "/calendar/manage",
+        "sma": "/calendar/manage",
         "hrt": "/calendar/manage",
         "dot": "/calendar/manage",
         "lol": "/calendar/manage"
+    }
+
+    calendar_type = {
+        "sc2": 1,
+        "brw": 2,
+        "csg": 3,
+        "hot": 4,
+        "sma": 5
     }
 
     class UriBuilder:
@@ -46,7 +66,13 @@ class Html:
                 date = datetime.now()
 
             fmt = date.strftime
-            return Html.base_uris[calendar] + Html.calendar_path[calendar] + "?view=%s&year=%s&month=%s&day=%s" % (view_by, fmt("%Y"), fmt("%m"), fmt("%d"))
+            url = Html.base_uris[calendar] + Html.calendar_path[calendar] + "?view=%s&year=%s&month=%s&day=%s" \
+                                                                            % (view_by, fmt("%Y"), fmt("%m"), fmt("%d"))
+
+            if calendar in Html.calendar_type.keys():
+                url += "&game=" + str(Html.calendar_type[calendar])
+
+            return url
 
         @staticmethod
         def get_event_uri(calendar="sc2"):
@@ -55,6 +81,11 @@ class Html:
     @staticmethod
     def get_calendar(calendar="sc2", by_week=True, by_month=False, date=None, debug=False):
         """
+        :param debug:
+        :param date:
+        :param by_month:
+        :param by_week:
+        :param calendar:
         :return: str
         """
 
@@ -62,7 +93,11 @@ class Html:
         if debug:
             print("Loading calendar from: %s" % calendar_uri)
 
-        tl_response = get(calendar_uri)
+        try:
+            tl_response = get(calendar_uri)
+        except exceptions.ConnectionError as h:
+            return ""
+
         if tl_response.status_code == codes.ok:
             return tl_response.content
         else:
