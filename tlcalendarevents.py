@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from liquid.persist.mongowrapper import MongoWrapper
 from liquid.persist.eventencoder import EventEncoder
-from liquid.persist.outputwrapper import OutputWrapper
+from liquid.scraper.html import Html
 from liquid import load_event_data
 from argparse import ArgumentParser
 from sys import argv
@@ -16,7 +16,7 @@ __license__ = "MIT"
 
 week = {}
 
-default_types = ["sc2", "hrt", "dot", "lol"]
+default_types = list(Html.base_uris.keys())
 default_start = datetime.now() - timedelta(days=1)
 
 parser = ArgumentParser(prog="tlevents")

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from liquid.persist.mongowrapper import MongoWrapper
 from liquid.persist.outputwrapper import OutputWrapper
 from liquid import load_from_date
+from liquid.scraper.html import Html
 from argparse import ArgumentParser
 from sys import argv
 
@@ -15,7 +16,7 @@ __license__ = "MIT"
 
 week = {}
 
-default_types = ["sc2", "hrt", "dot", "lol"]
+default_types = list(Html.base_uris.keys())
 default_start = datetime.now() - timedelta(weeks=1)
 
 parser = ArgumentParser(prog="tlscraper")
