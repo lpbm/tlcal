@@ -68,9 +68,13 @@ class Calendar:
         for day_html in days_html_list:
             start_day = int(day_html["data-day"])
             start_month = day.month
+            start_year = self.date.year
             if start_day < day.day:
                 start_month += 1
-            cur_day = day.replace(day=start_day, month=start_month)
+                if start_month == 13:
+                    start_month = 1
+                    start_year = self.date.year + 1 
+            cur_day = day.replace(day=start_day, month=start_month, year=start_year)
 
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
