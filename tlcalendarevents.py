@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pymongo.database import Database
 from liquid.persist.mongowrapper import MongoWrapper
 from liquid.persist.eventencoder import EventEncoder
 from liquid.scraper.html import Html
@@ -48,6 +49,10 @@ date_end = start + timedelta(days=days_delta)
 for _type in types:
     if debug:
         print("Loading events from calendar %s" % _type)
+
+    if not isinstance(wrapper.db, Database):
+        print("Failed to connect to Mongo")
+        exit(1)
 
     while True:
         if debug:
