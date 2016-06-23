@@ -8,14 +8,14 @@ class Html:
     """
 
     base_uris = {
-        "sc2": "https://www.teamliquid.net",
-        "brw": "https://www.teamliquid.net",
-        "csg": "https://www.teamliquid.net",
-        "hot": "https://www.teamliquid.net",
-        "sma": "https://www.teamliquid.net",
-        "hrt": "https://www.liquidhearth.com",
-        "dot": "https://www.liquiddota.com",
-        "lol": "https://www.liquidlegends.net"
+        "sc2": "http://www.teamliquid.net",
+        "brw": "http://www.teamliquid.net",
+        "csg": "http://www.teamliquid.net",
+        "hot": "http://www.teamliquid.net",
+        "sma": "http://www.teamliquid.net",
+        "hrt": "http://www.liquidhearth.com",
+        "dot": "http://www.liquiddota.com",
+        "lol": "http://www.liquidlegends.net"
     }
 
     calendar_path = {
