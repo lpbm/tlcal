@@ -4,8 +4,19 @@ from sys import argv
 
 from persist.outputwrapper import OutputWrapper
 
-from liquid.scraper.html import Html
+from liquid import load_from_date as liquid_load_from_date
+from plusfw import load_from_date as plusfw_load_from_date
+from liquid.scraper.html import Html as liquid_Html
+from plusfw.scraper.html import Html as plusfw_Html
 from persist.mongowrapper import MongoWrapper
+
+
+def load_from_date(type="qch", date=None, persist=None, debug=False):
+    if type in plusfw_Html.base_uris.keys():
+        return plusfw_load_from_date(type, date, persist, debug)
+    else:
+        return liquid_load_from_date(type, date, persist, debug)
+    return False
 
 """
 """
@@ -17,7 +28,9 @@ __license__ = "MIT"
 
 week = {}
 
-default_types = list(Html.base_uris.keys())
+plusfw_types = list(plusfw_Html.base_uris.keys())
+liquid_types = list(liquid_Html.base_uris.keys())
+default_types = plusfw_types + liquid_types
 default_start = datetime.now() - timedelta(weeks=1)
 
 parser = ArgumentParser(prog="tlscraper")
