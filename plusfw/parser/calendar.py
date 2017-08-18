@@ -144,17 +144,19 @@ class Calendar:
                         event_stage = subtitle_div.text
 
                     if matches_container_div:
-                        sub_event_id = None
-                        sub_event_links = {}
-
                         matches_div = matches_container_div.find_all("div", class_="cal_match")
                         for match_div in matches_div:
                             if match_div is None:
                                 continue
 
-                            sub_event_type = Calendar.EventMapper.get_event_type(
-                                event_block.find('div', class_='cal_cat')
-                            )
+                            sub_event_id = None
+                            sub_event_type = None
+                            sub_event_start_time = None
+                            sub_event_links = {}
+
+                            cat_div = event_block.find('div', class_='cal_cat')
+                            if cat_div:
+                                sub_event_type = Calendar.EventMapper.get_event_type(cat_div)
 
                             a_div = match_div.find('a')
                             if a_div:
@@ -165,13 +167,13 @@ class Calendar:
                                     key = int(m.group(1))
                                     sub_event_id = key
 
-                            start_block = match_div.findChild("div", class_="cal_time")
-                            if start_block:
-                                start_time_str = start_block.contents[0]
+                            time_div = match_div.findChild("div", class_="cal_time")
+                            if time_div:
+                                start_time_str = time_div.contents[0]
+                                sub_event_start_time = datetime.strptime(
+                                    "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
+                                )
 
-                            sub_event_start_time = datetime.strptime(
-                                "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
-                            )
                             if sub_event_type and sub_event_start_time and event_category:
                                 event_match_count += 1
                                 sub_event = event.Event()
