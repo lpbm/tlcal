@@ -5,8 +5,7 @@ from pymongo.database import Database
 from pymongo.errors import PyMongoError
 
 from model.event import Event
-#from persist import EventEncoder
-
+from persist.eventencoder import EventEncoder
 
 class MongoWrapper:
     def __init__(self, debug=False):

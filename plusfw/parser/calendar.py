@@ -111,6 +111,7 @@ class Calendar:
                     event_stage = ''
                     event_category = None
                     event_links = {}
+                    event_match_count = 1
 
                     category_div = event_block.find("div", class_="cal_e_title")
 
@@ -137,14 +138,16 @@ class Calendar:
                         m = re.search('quake/post/(\d+)/.*', event_links['event'])
                         if m:
                             key = int(m.group(1))
-                        event_id = key
+                            event_id = key
 
                     if subtitle_div:
                         event_stage = subtitle_div.text
 
                     if matches_container_div:
-                        matches_div = matches_container_div.find_all("div", class_="cal_match")
+                        sub_event_id = None
                         sub_event_links = {}
+
+                        matches_div = matches_container_div.find_all("div", class_="cal_match")
                         for match_div in matches_div:
                             if match_div is None:
                                 continue
@@ -169,8 +172,8 @@ class Calendar:
                             sub_event_start_time = datetime.strptime(
                                 "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
                             )
-                            if sub_event_id and event_type and sub_event_start_time and event_category:
-                                _event.match_count += 1
+                            if sub_event_type and sub_event_start_time and event_category:
+                                event_match_count += 1
                                 sub_event = event.Event()
                                 sub_event.tl_id = sub_event_id
                                 sub_event.category = event_category
@@ -185,6 +188,7 @@ class Calendar:
                     if event_id and event_type and event_start_time and event_category:
                         _event = event.Event()
                         _event.tl_id = event_id
+                        _event.match_count = event_match_count
                         _event.category = event_category
                         _event.stage = event_stage
                         _event.start_time = event_start_time
