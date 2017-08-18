@@ -6,5 +6,5 @@ After=network.target
 Type=simple
 SyslogLevel=err
 
-ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tlcalendar.py --calendar sc2 brw csg hot sma dot lol hrt 
+ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tlcalendar.py --calendar sc2 brw csg hot sma dot lol hrt pfw
 
