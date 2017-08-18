@@ -216,8 +216,9 @@ class Calendar:
         I need to fix this, the match duration depends on the event type
         return:timedelta
         """
-        match_duration = 90
-        duration = timedelta(minutes=1 * match_duration)
+        match_duration = 30
+        buffer_duration = 15
+        duration = timedelta(minutes=(event.match_count * (match_duration + buffer_duration) - buffer_duration))
         event.end_time = event.start_time + duration
         return match_duration
 
