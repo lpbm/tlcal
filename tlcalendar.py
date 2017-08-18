@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
-from liquid.persist.mongowrapper import MongoWrapper
-from liquid.persist.outputwrapper import OutputWrapper
-from liquid import load_from_date
-from liquid.scraper.html import Html
 from argparse import ArgumentParser
+from datetime import datetime, timedelta
 from sys import argv
+
+from persist.outputwrapper import OutputWrapper
+
+from liquid.scraper.html import Html
+from persist.mongowrapper import MongoWrapper
 
 """
 """

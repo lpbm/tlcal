@@ -1,9 +1,11 @@
+from datetime import datetime, timedelta
+
 from pymongo import MongoClient, ReturnDocument
 from pymongo.database import Database
 from pymongo.errors import PyMongoError
-from liquid.persist.eventencoder import EventEncoder
-from liquid.model.event import Event
-from datetime import datetime, timedelta
+
+from model.event import Event
+#from persist import EventEncoder
 
 
 class MongoWrapper:

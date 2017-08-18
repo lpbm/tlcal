@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta
-from bs4 import BeautifulSoup, Tag
-from liquid.model import event
-from liquid.scraper.html import Html
 import re
+from datetime import datetime, timedelta
+
+from bs4 import BeautifulSoup, Tag
+
+from liquid.scraper.html import Html
+from model import event
 
 
 class Calendar:
@@ -78,8 +80,8 @@ class Calendar:
 
             event_blocks = day_html.find_all("div", class_="ev-block")
             if len(event_blocks) > 0:
-                # if self.debug:
-                #     print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
+                if self.debug:
+                    print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
 
                 for event_block in event_blocks:
                     if event_block:
@@ -116,7 +118,7 @@ class Calendar:
                                         time.decompose()
 
                             _event.content = body_block.get_text().strip("\n")
-                            _event.estimate_duration()
+                            self.estimate_duration(_event)
 
                         if _event.is_valid():
                             _events.append(_event)
@@ -129,6 +131,22 @@ class Calendar:
             print("Total events: %d" % len(self.events))
 
         return True
+
+    @staticmethod
+    def estimate_duration(event):
+        """
+        I need to fix this, the match duration depends on the event type
+        return:timedelta
+        """
+        match_duration = 40
+        if len(event.content) > 0:
+            m = re.findall(' vs ', event.content)
+            if len(m) > 0:
+                event.match_count = len(m)
+
+        duration = timedelta(minutes=event.match_count * match_duration)
+        event.end_time = event.start_time + duration
+        return duration
 
     def load_event_info(self, event_content, calendar="sc2"):
         """

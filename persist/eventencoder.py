@@ -1,6 +1,6 @@
 from json import JSONDecoder, JSONEncoder
-import json
-from liquid.model.event import Event
+
+from model.event import Event
 
 
 class EventEncoder(JSONEncoder, JSONDecoder):

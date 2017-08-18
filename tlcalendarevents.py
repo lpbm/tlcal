@@ -1,11 +1,13 @@
-from datetime import datetime, timedelta
-from pymongo.database import Database
-from liquid.persist.mongowrapper import MongoWrapper
-from liquid.persist.eventencoder import EventEncoder
-from liquid.scraper.html import Html
-from liquid import load_event_data
 from argparse import ArgumentParser
+from datetime import datetime, timedelta
 from sys import argv
+
+from persist.eventencoder import EventEncoder
+from pymongo.database import Database
+
+from liquid import load_event_data
+from liquid.scraper.html import Html
+from persist.mongowrapper import MongoWrapper
 
 """
 """

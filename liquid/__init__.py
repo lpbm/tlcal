@@ -1,14 +1,15 @@
 from datetime import datetime
+
 from liquid.parser.calendar import Calendar
 from liquid.scraper.html import Html
-from liquid.persist.mongowrapper import MongoWrapper
+from persist.mongowrapper import MongoWrapper
 
 __author__ = "Marius Orcsik <marius@habarnam.ro>"
 __version__ = "0.0.1"
 __copyright__ = "Copyright (c) 2015 Marius Orcsik"
 __license__ = "MIT"
 
-__all__ = ['model', 'parser', 'scraper', 'persist']
+__all__ = ['parser', 'scraper']
 
 
 def load_from_date(type_="sc2", date=None, persist=None, debug=False):
