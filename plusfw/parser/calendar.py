@@ -1,4 +1,5 @@
 import re
+import copy
 from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup, Tag
@@ -37,6 +38,9 @@ class Calendar:
         """
         @staticmethod
         def get_event_type(event_tag):
+            if event_tag is None:
+                return 0
+
             key = 0
             element = event_tag.findChild("i", class_="pfcat")
             if element:
@@ -94,56 +98,109 @@ class Calendar:
                     start_month = 1
                     start_year = self.date.year + 1
             cur_day = day.replace(day=start_day, month=start_month, year=start_year)
-            event_blocks = day_html.find("div", class_="cal_event")
+            event_blocks = day_html.find_all("div", class_="cal_event")
 
             if event_blocks is None or len(event_blocks) == 0:
                 continue
 
             for event_block in event_blocks:
                 if event_block:
-                    _event = event.Event()
-                    _event.type = Calendar.EventMapper.get_event_type(event_block.find('div', class_='cal_cat'))
+                    event_id = None
+                    event_type = None
+                    event_start_time = None
+                    event_stage = ''
+                    event_category = None
+                    event_links = {}
+
+                    category_div = event_block.find("div", class_="cal_e_title")
+
+                    if category_div is None:
+                        continue
+
+                    subtitle_div = event_block.find("div", class_="cal_e_subtitle")
+                    matches_container_div = event_block.find("div", class_="cal_matches")
+
+                    event_type = Calendar.EventMapper.get_event_type(event_block.find('div', class_='cal_cat'))
 
                     start_block = event_block.findChild("div", class_="cal_time")
                     if start_block:
-                        start_time = start_block.contents[0]
+                        start_time_str = start_block.contents[0]
 
-                    _event.start_time = datetime.strptime(
-                        "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time), "%Y-%m-%d %H:%M"
+                    event_start_time = datetime.strptime(
+                        "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
                     )
 
-                    title_div = event_block.find("div", class_="cal_title")
+                    title_div = category_div.find("div", class_="cal_title")
                     if title_div:
-                        _event.category = title_div.a.text
-                        _event.links['event'] = Html.UriBuilder.get_uri(_event.type) + title_div.a.get('href')
-                        m = re.search('quake/post/(\d+)/.*', title_div.a.get('href'))
+                        event_category = title_div.a.text
+                        event_links['event'] = Html.UriBuilder.get_uri(event_type) + title_div.a.get('href')
+                        m = re.search('quake/post/(\d+)/.*', event_links['event'])
                         if m:
                             key = int(m.group(1))
-                        _event.tl_id = key
+                        event_id = key
 
-                    body_block = event_block.find("div", class_="ev-match")
-                    if body_block:
-                        # look for times for the matches
-                        times = body_block.find("div", class_="cal_time")
-                        if times is not None:
-                            for time in times:
-                                if isinstance(time, Tag):
-                                    time.decompose()
+                    if subtitle_div:
+                        event_stage = subtitle_div.text
 
+                    if matches_container_div:
+                        matches_div = matches_container_div.find_all("div", class_="cal_match")
+                        sub_event_links = {}
+                        for match_div in matches_div:
+                            if match_div is None:
+                                continue
+
+                            sub_event_type = Calendar.EventMapper.get_event_type(
+                                event_block.find('div', class_='cal_cat')
+                            )
+
+                            a_div = match_div.find('a')
+                            if a_div:
+                                sub_event_content = a_div.text
+                                sub_event_links['event'] = Html.UriBuilder.get_uri(event_type) + a_div.get('href')
+                                m = re.search('quake/post/(\d+)/.*', sub_event_links['event'])
+                                if m:
+                                    key = int(m.group(1))
+                                    sub_event_id = key
+
+                            start_block = match_div.findChild("div", class_="cal_time")
+                            if start_block:
+                                start_time_str = start_block.contents[0]
+
+                            sub_event_start_time = datetime.strptime(
+                                "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
+                            )
+                            if sub_event_id and event_type and sub_event_start_time and event_category:
+                                _event.match_count += 1
+                                sub_event = event.Event()
+                                sub_event.tl_id = sub_event_id
+                                sub_event.category = event_category
+                                sub_event.stage = event_stage
+                                sub_event.content = sub_event_content
+                                sub_event.start_time = sub_event_start_time
+                                sub_event.links = sub_event_links
+                                sub_event.type = sub_event_type
+                                self.estimate_duration(sub_event)
+                                _events.append(sub_event)
+
+                    if event_id and event_type and event_start_time and event_category:
+                        _event = event.Event()
+                        _event.tl_id = event_id
+                        _event.category = event_category
+                        _event.stage = event_stage
+                        _event.start_time = event_start_time
+                        _event.type = event_type
+                        _event.links = event_links
                         self.estimate_duration(_event)
-
-                    # _event.category = "q"
-                    # _event.stage = "q"
-                    if _event.is_valid():
                         _events.append(_event)
 
                 if len(_events) > 0:
                     self.events = _events
-
         if self.debug:
             end_day = day + timedelta(days=no_days)
-            print("Period: %s - %s" % (day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d")))
-            print("Total events: %d" % len(self.events))
+            print("__________________________________________________")
+            print("Period: %29s - %s" % (day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d")))
+            print("Total events: %14d" % len(self.events))
+            print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
         return True
 
@@ -154,7 +211,8 @@ class Calendar:
         return:timedelta
         """
         match_duration = 90
-        event.end_time = event.start_time + match_duration
+        duration = timedelta(minutes=1 * match_duration)
+        event.end_time = event.start_time + duration
         return match_duration
 
     def load_event_info(self, event_content, calendar="qch"):

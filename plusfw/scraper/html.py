@@ -9,6 +9,7 @@ class Html:
 
     base_uris = {
         # +->
+        "pfw": "https://www.plusforward.net",
         "qlv": "https://www.plusforward.net",
         "qiv": "https://www.plusforward.net",
         "q3": "https://www.plusforward.net",
@@ -29,7 +30,7 @@ class Html:
 
     calendar_path = {
         # +->
-        "unk": "/calendar/",
+        "pfw": "/calendar/",
         "qlv": "/calendar/",
         "qiv": "/calendar/",
         "q3": "/calendar/",
@@ -50,7 +51,7 @@ class Html:
 
     event_path = {
         # +->
-        "unk": "/calendar/manage/",
+        "pwf": "/calendar/manage/",
         "qlv": "/calendar/manage/",
         "qiv": "/calendar/manage/",
         "q3": "/calendar/manage/",
@@ -88,6 +89,7 @@ class Html:
         "xnt": 18,
         "qch": 20,
         "cpma": 21,
+        "pfw": 999,
     }
 
     class UriBuilder:
@@ -95,14 +97,14 @@ class Html:
         """
 
         @staticmethod
-        def get_uri(calendar="qch"):
+        def get_uri(calendar="pfw"):
             return Html.base_uris[calendar]
 
         @staticmethod
-        def get_calendar_uri(calendar="qch", by_week=True, by_month=False, date=None):
+        def get_calendar_uri(calendar="pfw", by_week=True, date=None):
             if by_week:
                 view_by = "week"
-            if by_month:
+            else:
                 view_by = "month"
 
             if date is None:
@@ -115,21 +117,20 @@ class Html:
             return url
 
         @staticmethod
-        def get_event_uri(calendar="qch"):
+        def get_event_uri(calendar="pfw"):
             return Html.base_uris[calendar] + Html.event_path[calendar]
 
     @staticmethod
-    def get_calendar(calendar="qch", by_week=True, by_month=False, date=None, debug=False):
+    def get_calendar(calendar="+fw", by_week=True, date=None, debug=False):
         """
         :param debug:
         :param date:
-        :param by_month:
         :param by_week:
         :param calendar:
         :return: str
         """
 
-        calendar_uri = Html.UriBuilder.get_calendar_uri(calendar, by_week, by_month, date)
+        calendar_uri = Html.UriBuilder.get_calendar_uri(calendar, by_week, date)
         if debug:
             print("Loading calendar from: %s" % calendar_uri)
 
@@ -137,9 +138,12 @@ class Html:
             "cat": str(Html.calendar_type[calendar])
         }
         try:
-            tl_response = post(calendar_uri, post_data)
+            if calendar != "pfw":
+                tl_response = post(calendar_uri, post_data)
+            else:
+                tl_response = get(calendar_uri)
         except exceptions.ConnectionError as h:
-            return ""
+            return "" % h
 
         if tl_response.status_code == codes.ok:
             return tl_response.content
