@@ -111,7 +111,7 @@ class Calendar:
                     event_stage = ''
                     event_category = None
                     event_links = {}
-                    event_match_count = 1
+                    event_match_count = 0
 
                     category_div = event_block.find("div", class_="cal_e_title")
 

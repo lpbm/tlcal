@@ -16,6 +16,7 @@ class OutputWrapper:
                     print("[%s] %s: %s" % (_event.type.upper(), u_category, u_stage))
                 print("Begin time: %s" % _event.start_time)
                 print("End time: %s" % _event.end_time)
+                print("Matches: %d" % _event.match_count)
                 for _link in _event.links:
                     print("\t%s - %s" % (_link,  _event.links[_link]))
 
