@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from liquid.parser.calendar import Calendar
-from liquid.scraper.html import Html
+from plusfw.parser.calendar import Calendar
+from plusfw.scraper.html import Html
 from persist.mongowrapper import MongoWrapper
 
 __author__ = "Marius Orcsik <marius@habarnam.ro>"
@@ -12,7 +12,7 @@ __license__ = "MIT"
 __all__ = ['parser', 'scraper']
 
 
-def load_from_date(type_="sc2", date=None, persist=None, debug=False):
+def load_from_date(type_="qch", date=None, persist=None, debug=False):
     """
     :type type_: str
     :type date: datetime
@@ -29,6 +29,10 @@ def load_from_date(type_="sc2", date=None, persist=None, debug=False):
         return False
 
     raw_content = Html.get_calendar(type_, by_week=True, date=date, debug=debug)
+
+    f = open('workfile.html', 'wb')
+    f.write(raw_content)
+    f.close()
 
     _parser = Calendar(date=date, debug=debug)
     if _parser.load_calendar(type_, raw_content) and len(_parser.events) > 0:

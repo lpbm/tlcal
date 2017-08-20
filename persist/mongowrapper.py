@@ -1,10 +1,11 @@
+from datetime import datetime, timedelta
+
 from pymongo import MongoClient, ReturnDocument
 from pymongo.database import Database
 from pymongo.errors import PyMongoError
-from liquid.persist.eventencoder import EventEncoder
-from liquid.model.event import Event
-from datetime import datetime, timedelta
 
+from model.event import Event
+from persist.eventencoder import EventEncoder
 
 class MongoWrapper:
     def __init__(self, debug=False):
@@ -46,6 +47,7 @@ class MongoWrapper:
             if isinstance(_event, Event):
                 original = self.db.events.find_one({"_id": _event.tl_id})
                 if original is None:
+                    _event.last_modified_time = datetime.now()
                     result = self.db.events.insert_one(encoder.encode(_event))
                     """ :type : pymongo.results.InsertOneResult """
                     if result.inserted_id > 0:
@@ -56,6 +58,7 @@ class MongoWrapper:
                     _event.canceled = False
                     original_event = encoder.decode(original)
                     if original_event != _event:
+                        _event.last_modified_time = datetime.now()
                         result = self.db.events.replace_one(original, encoder.encode(_event))
                         """ @type : pymongo.results.UpdateResult """
                         if result.modified_count > 0:

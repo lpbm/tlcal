@@ -1,10 +1,22 @@
-from datetime import datetime, timedelta
-from liquid.persist.mongowrapper import MongoWrapper
-from liquid.persist.outputwrapper import OutputWrapper
-from liquid import load_from_date
-from liquid.scraper.html import Html
 from argparse import ArgumentParser
+from datetime import datetime, timedelta
 from sys import argv
+
+from persist.outputwrapper import OutputWrapper
+
+from liquid import load_from_date as liquid_load_from_date
+from plusfw import load_from_date as plusfw_load_from_date
+from liquid.scraper.html import Html as liquid_Html
+from plusfw.scraper.html import Html as plusfw_Html
+from persist.mongowrapper import MongoWrapper
+
+
+def load_from_date(type="qch", date=None, persist=None, debug=False):
+    if type in plusfw_Html.base_uris.keys():
+        return plusfw_load_from_date(type, date, persist, debug)
+    else:
+        return liquid_load_from_date(type, date, persist, debug)
+    return False
 
 """
 """
@@ -16,12 +28,16 @@ __license__ = "MIT"
 
 week = {}
 
-default_types = list(Html.base_uris.keys())
+plusfw_types = list(plusfw_Html.base_uris.keys())
+liquid_types = list(liquid_Html.base_uris.keys())
+default_types = plusfw_types + liquid_types
 default_start = datetime.now() - timedelta(weeks=1)
 
 parser = ArgumentParser(prog="tlscraper")
 parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
                     default=default_start.strftime("%Y-%m-%d"))
+parser.add_argument('--end-date', help="The end date for loading events YYYY-MM-DD",
+                    default=None)
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
 parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
@@ -34,6 +50,9 @@ if len(argv) == 1:
 
 debug = args.debug
 start = datetime.strptime(args.start_date, "%Y-%m-%d")
+end = None
+if args.end_date:
+    end = datetime.strptime(args.end_date, "%Y-%m-%d")
 types = args.calendar
 dry_run = args.dry_run
 
@@ -45,5 +64,8 @@ else:
 for _type in types:
     date = start
     while load_from_date(_type, date, persist=wrapper, debug=debug):
-        date += timedelta(weeks=1)
+        if end is None or date + timedelta(days=7) < end:
+            date += timedelta(weeks=1)
+        else:
+            break
 exit()

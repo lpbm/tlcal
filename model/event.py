@@ -1,6 +1,3 @@
-from datetime import timedelta
-import re
-
 
 class Event:
     """
@@ -9,6 +6,7 @@ class Event:
     tl_id = 0
     start_time = None
     end_time = None
+    last_modified_time = None
     type = ""
     category = ""
     stage = ""
@@ -23,24 +21,9 @@ class Event:
         :return:
         """
 
-    def estimate_duration(self):
-        """
-        I need to fix this, the match duration depends on the event type
-        return:timedelta
-        """
-        match_duration = 40
-        if len(self.content) > 0:
-            m = re.findall(' vs ', self.content)
-            if len(m) > 0:
-                self.match_count = len(m)
-
-        duration = timedelta(minutes=self.match_count * match_duration)
-        self.end_time = self.start_time + duration
-        return duration
-
     def is_valid(self):
         return (
-            ((len(self.category) > 0) or (len(self.stage) > 0)) and
+            # ((len(self.category) > 0) or (len(self.stage) > 0)) and
             (self.start_time is not None) and
             (self.tl_id > 0)
         )
@@ -63,4 +46,7 @@ class Event:
         return self.__str__()
 
     def __str__(self):
-        return "<[%s:%s] @ %s-%s>" % (self.category, self.stage, self.start_time, self.end_time)
+        if self.category is None or self.stage is None or len(self.category) == 0 or len(self.stage) == 0:
+            return "<%s-%s>" % (self.start_time, self.end_time)
+        else:
+            return "<[%s:%s] @ %s-%s>" % (self.category, self.stage, self.start_time, self.end_time)
