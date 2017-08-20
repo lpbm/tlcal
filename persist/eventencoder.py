@@ -10,6 +10,7 @@ class EventEncoder(JSONEncoder, JSONDecoder):
                 "_id": o.tl_id,
                 "start_time": o.start_time,
                 "end_time": o.end_time,
+                "last_modified_time": o.last_modified_time,
                 "type": o.type,
                 "category": o.category,
                 "stage": o.stage,
@@ -30,6 +31,8 @@ class EventEncoder(JSONEncoder, JSONDecoder):
         o.category = s["category"]
         o.stage = s["stage"]
         o.content = s["content"]
+        if "last_modified_time" in s:
+            o.last_modified_time = s["last_modified_time"]
         if "links" in s:
             o.links = s["links"]
         if "canceled" in s:

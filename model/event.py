@@ -6,6 +6,7 @@ class Event:
     tl_id = 0
     start_time = None
     end_time = None
+    last_modified_time = None
     type = ""
     category = ""
     stage = ""
