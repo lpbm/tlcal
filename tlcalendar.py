@@ -36,6 +36,8 @@ default_start = datetime.now() - timedelta(weeks=1)
 parser = ArgumentParser(prog="tlscraper")
 parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
                     default=default_start.strftime("%Y-%m-%d"))
+parser.add_argument('--end-date', help="The end date for loading events YYYY-MM-DD",
+                    default=None)
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
 parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
@@ -48,6 +50,9 @@ if len(argv) == 1:
 
 debug = args.debug
 start = datetime.strptime(args.start_date, "%Y-%m-%d")
+end = None
+if args.end_date:
+    end = datetime.strptime(args.end_date, "%Y-%m-%d")
 types = args.calendar
 dry_run = args.dry_run
 
@@ -59,5 +64,8 @@ else:
 for _type in types:
     date = start
     while load_from_date(_type, date, persist=wrapper, debug=debug):
-        date += timedelta(weeks=1)
+        if end is None or date + timedelta(days=7) < end:
+            date += timedelta(weeks=1)
+        else:
+            break
 exit()
