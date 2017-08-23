@@ -167,14 +167,16 @@ class Calendar:
         link_blocks = soup.find("div", class_="evc-link")
 
         for link_block in link_blocks:
-            if isinstance(link_block, Tag):
-                name = link_block.div.text
-                link = link_block.find("a")
-                href = link["href"]
+            if link_block is None:
+                continue
 
-                if "forum" in href:
-                    href = Html.UriBuilder.get_uri(calendar) + href
+            name = link_block.div.text
+            link = link_block.find("a")
+            href = link["href"]
 
-                links[name] = href
+            if "forum" in href:
+                href = Html.UriBuilder.get_uri(calendar) + href
+
+            links[name] = href
 
         return links
