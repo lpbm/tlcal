@@ -108,11 +108,12 @@ class MongoWrapper:
         except PyMongoError:
             return _events
 
-        for _event in cursor:
+        for event in cursor:
+            _event = decoder.decode(event)
             if not isinstance(_event, Event):
                 continue
             if self.debug:
                 print(_event)
-            _events.append(decoder.decode(_event))
+            _events.append(_event)
 
         return _events
