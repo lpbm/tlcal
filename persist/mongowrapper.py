@@ -7,13 +7,13 @@ from pymongo.errors import PyMongoError
 from model.event import Event
 from persist.eventencoder import EventEncoder
 
+
 class MongoWrapper:
     def __init__(self, debug=False):
         self.debug = debug
         try:
             self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=300')
             self.db = self.client.tlcalendar
-            self.db.events.count()
         except PyMongoError:
             self.client = None
             self.db = None
@@ -26,7 +26,8 @@ class MongoWrapper:
         skipped = 0
 
         if not isinstance(self.db, Database):
-            print("Could not persist to MongoDB")
+            if self.debug:
+                print("Could not persist to MongoDB")
             return False
 
         if self.debug:
@@ -85,3 +86,33 @@ class MongoWrapper:
             if (failed["inserts"] + failed["updates"] + failed["deleted"]) > 0:
                 print(" NOK: INS:%d UPD:%d DEL:%d" % (failed["inserts"], failed["updates"], failed["deleted"]))
         return True
+
+    def load_events(self, event_types, start_time, end_time=None):
+        decoder = EventEncoder()
+        _events = []
+
+        if not isinstance(self.db, Database):
+            if self.debug:
+                print("Could not load from MongoDB")
+            return _events
+
+        what = {"type": {"$in": event_types}, "start_time": {"$gte": start_time, "$lte": end_time}}
+        if self.debug:
+            print("search: {}".format(what))
+        cursor = self.db.events.find(what)
+        cursor.max_time_ms = 200
+
+        try:
+            if not cursor.alive or cursor.count() == 0:
+                return _events
+        except PyMongoError:
+            return _events
+
+        for _event in cursor:
+            if not isinstance(_event, Event):
+                continue
+            if self.debug:
+                print(_event)
+            _events.append(decoder.decode(_event))
+
+        return _events
