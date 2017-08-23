@@ -37,6 +37,11 @@ now = datetime.now()
 end_time = now + timedelta(minutes=interval)
 
 soonish_events = MongoWrapper(debug=True).load_events(types, now, end_time)
+if debug:
+    if len(soonish_events) == 0:
+        print("No events found")
+    else:
+        print("Found {} events".format(len(soonish_events)))
 
 for _event in soonish_events:
     toot = False
@@ -56,14 +61,15 @@ for _event in soonish_events:
                 print("Will skip tooting for event type {}".format(_event.type))
 
     if _event.stage:
-        title = "[{}] {}: {}".format(_event.type, _event.category, _event.stage)
+        title = "{}: {}".format(_event.category, _event.stage)
     else:
-        title = "[{}] {}".format(_event.type, _event.category)
+        title = "{}".format(_event.category)
     storyid = _event.tl_id
     when = _event.start_time - now
     in_minutes = when.total_seconds() / 60
     if len(_event.links):
         links = _event.links.values().join("\n")
+
         post = "{} begins in {} min!\n{}\n\n#{}".format(title, int(in_minutes), links, _event.type)
     else:
         post = "{} begins in {} min!\n\n#{}".format(title, int(in_minutes), _event.type)
