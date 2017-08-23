@@ -41,7 +41,7 @@ parser.add_argument('--end-date', help="The end date for loading events YYYY-MM-
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
 parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
-                    default=default_types[0], choices=default_types, metavar="sc2")
+                    default=default_types[0], choices=default_types, metavar=default_types[0])
 
 args = parser.parse_args()
 if len(argv) == 1:
