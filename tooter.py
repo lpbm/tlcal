@@ -72,7 +72,7 @@ for _event in soonish_events:
     in_minutes = int(event_time.total_seconds() / 60)
     if in_minutes == 0:
         when = "starts NOW !!"
-    else if in_minutes < 0:
+    elif in_minutes < 0:
         when = "has started {} min ago!".format(abs(in_minutes))
     else:
         when = "begins in {} min!".format(abs(in_minutes))
