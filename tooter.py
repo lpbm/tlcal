@@ -59,11 +59,12 @@ for _event in soonish_events:
         title = "[{}] {}".format(_event.type, _event.category)
     storyid = _event.tl_id
     when = _event.start_time - now
+    in_minutes = when.total_seconds() / 60
     if len(_event.links):
         links = _event.links.values().join("\n")
-        post = "{} begins in {}minutes!\n{}\n\n#{}".format(title, when.minutes, links, _event.type)
+        post = "{} begins in {}minutes!\n{}\n\n#{}".format(title, in_minutes, links, _event.type)
     else:
-        post = "{} begins in {}minutes!\n\n#{}".format(title, when.minutes, _event.type)
+        post = "{} begins in {}minutes!\n\n#{}".format(title, in_minutes, _event.type)
 
     if debug:
         print(post)
