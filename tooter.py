@@ -19,7 +19,7 @@ default_types = plusfw_types + liquid_types
 parser = ArgumentParser(prog="tooter")
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not toot", const=True, default=False)
-parser.add_argument('--interval', nargs='?', help="Interval of minutes to search for events", const=True, default=5)
+parser.add_argument('--interval', nargs='?', help="Interval of minutes to search for events", type=int, default=5)
 parser.add_argument('--types', nargs='+',  help="Which types to load events for",
                     default=default_types[0], choices=default_types, metavar=default_types[0])
 
