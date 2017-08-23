@@ -11,7 +11,7 @@ from plusfw.scraper.html import Html as plusfw_Html
 from persist.mongowrapper import MongoWrapper
 
 
-def load_from_date(type="qch", date=None, persist=None, debug=False):
+def load_from_date(type="pfw", date=None, persist=None, debug=False):
     if type in plusfw_Html.base_uris.keys():
         return plusfw_load_from_date(type, date, persist, debug)
     else:

@@ -84,51 +84,55 @@ class Calendar:
                     print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
 
                 for event_block in event_blocks:
-                    if event_block:
-                        _event = event.Event()
-                        if calendar == "sc2":
-                            _event.type = Calendar.EventMapper.get_event_type(event_block)
-                        else:
-                            _event.type = calendar
+                    if event_block is None:
+                        continue
 
-                        start_block = event_block.findChild("span", class_="ev-timer")
-                        if start_block:
-                            start_time = start_block.contents[0]
+                    _event = event.Event()
+                    if calendar == "sc2":
+                        _event.type = Calendar.EventMapper.get_event_type(event_block)
+                    else:
+                        _event.type = calendar
 
-                        _event.start_time = datetime.strptime(
-                            "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time), "%Y-%m-%d %H:%M"
-                        )
+                    start_block = event_block.findChild("span", class_="ev-timer")
+                    if start_block:
+                        start_time = start_block.contents[0]
 
-                        title_div = event_block.find("div", class_="ev-ctrl")
-                        if title_div:
-                            _event.category = title_div.span.contents[0]
-                            _event.tl_id = int(title_div.span["data-event-id"])
+                    _event.start_time = datetime.strptime(
+                        "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time), "%Y-%m-%d %H:%M"
+                    )
 
-                        stage_block = event_block.find("div", class_="ev-stage")
-                        if stage_block and len(stage_block.contents) > 0:
-                            _event.stage = stage_block.contents[0]
+                    title_div = event_block.find("div", class_="ev-ctrl")
+                    if title_div:
+                        _event.category = title_div.span.contents[0]
+                        _event.tl_id = int(title_div.span["data-event-id"])
 
-                        body_block = event_block.find("div", class_="ev-match")
-                        if body_block:
-                            # look for times for the matches
-                            times = body_block.find("span", class_="ev-timer")
-                            if times is not None:
-                                for time in times:
-                                    if isinstance(time, Tag):
-                                        time.decompose()
+                    stage_block = event_block.find("div", class_="ev-stage")
+                    if stage_block and len(stage_block.contents) > 0:
+                        _event.stage = stage_block.contents[0]
 
-                            _event.content = body_block.get_text().strip("\n")
-                            self.estimate_duration(_event)
+                    body_block = event_block.find("div", class_="ev-match")
+                    if body_block:
+                        # look for times for the matches
+                        times = body_block.find("span", class_="ev-timer")
+                        if times:
+                            for time in times:
+                                if isinstance(time, Tag):
+                                    time.decompose()
 
-                        if _event.is_valid():
-                            _events.append(_event)
+                        _event.content = body_block.get_text().strip("\n")
+                        self.estimate_duration(_event)
+
+                    if _event.is_valid():
+                        _events.append(_event)
 
                 if len(_events) > 0:
                     self.events = _events
         if self.debug:
             end_day = day + timedelta(days=no_days)
-            print("Period: %s - %s" % (day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d")))
-            print("Total events: %d" % len(self.events))
+            print("__________________________________________________")
+            print("Period: %29s - %s" % (day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d")))
+            print("Total events: %14d" % len(self.events))
+            print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
         return True
 

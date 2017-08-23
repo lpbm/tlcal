@@ -104,68 +104,68 @@ class Calendar:
                 continue
 
             for event_block in event_blocks:
-                if event_block:
-                    event_id = None
-                    event_type = None
-                    event_start_time = None
-                    event_stage = ''
-                    event_category = None
-                    event_links = {}
-                    event_match_count = 0
+                if event_block is None:
+                    continue
 
-                    category_div = event_block.find("div", class_="cal_e_title")
+                event_id = None
+                event_stage = ''
+                event_category = None
+                event_links = {}
+                event_match_count = 1
 
-                    if category_div is None:
-                        continue
+                category_div = event_block.find("div", class_="cal_e_title")
 
-                    subtitle_div = event_block.find("div", class_="cal_e_subtitle")
-                    matches_container_div = event_block.find("div", class_="cal_matches")
+                if category_div is None:
+                    continue
 
-                    event_type = Calendar.EventMapper.get_event_type(event_block.find('div', class_='cal_cat'))
+                subtitle_div = event_block.find("div", class_="cal_e_subtitle")
+                matches_container_div = event_block.find("div", class_="cal_matches")
 
-                    start_block = event_block.findChild("div", class_="cal_time")
-                    if start_block:
-                        start_time_str = start_block.contents[0]
+                event_type = Calendar.EventMapper.get_event_type(event_block.find('div', class_='cal_cat'))
 
-                    event_start_time = datetime.strptime(
-                        "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
-                    )
+                start_block = event_block.findChild("div", class_="cal_time")
+                if start_block:
+                    start_time_str = start_block.contents[0]
 
-                    title_div = category_div.find("div", class_="cal_title")
-                    if title_div:
-                        event_category = title_div.a.text
-                        event_links['event'] = Html.UriBuilder.get_uri(event_type) + title_div.a.get('href')
-                        m = re.search('quake/post/(\d+)/.*', event_links['event'])
-                        if m:
-                            key = int(m.group(1))
-                            event_id = key
+                event_start_time = datetime.strptime(
+                    "%s %s" % (cur_day.strftime("%Y-%m-%d"), start_time_str), "%Y-%m-%d %H:%M"
+                )
 
-                    if subtitle_div:
-                        event_stage = subtitle_div.text
+                title_div = category_div.find("div", class_="cal_title")
+                if title_div:
+                    event_category = title_div.a.text
+                    event_links['event'] = Html.UriBuilder.get_uri(event_type) + title_div.a.get('href')
+                    m = re.search('quake/post/(\d+)/.*', event_links['event'])
+                    if m:
+                        key = int(m.group(1))
+                        event_id = key
 
-                    if matches_container_div:
-                        matches_div = matches_container_div.find_all("div", class_="cal_match")
-                        for match_div in matches_div:
-                            if match_div is None:
-                                continue
+                if subtitle_div:
+                    event_stage = subtitle_div.text
 
-                            sub_event_id = None
-                            sub_event_type = None
-                            sub_event_start_time = None
-                            sub_event_links = {}
+                if matches_container_div:
+                    matches_div = matches_container_div.find_all("div", class_="cal_match")
+                    for match_div in matches_div:
+                        if match_div is None:
+                            continue
 
-                            cat_div = event_block.find('div', class_='cal_cat')
-                            if cat_div:
-                                sub_event_type = Calendar.EventMapper.get_event_type(cat_div)
+                        sub_event_id = None
+                        sub_event_type = None
+                        sub_event_start_time = None
+                        sub_event_links = {}
 
-                            a_div = match_div.find('a')
-                            if a_div:
-                                sub_event_content = a_div.text
-                                sub_event_links['event'] = Html.UriBuilder.get_uri(event_type) + a_div.get('href')
-                                m = re.search('quake/post/(\d+)/.*', sub_event_links['event'])
-                                if m:
-                                    key = int(m.group(1))
-                                    sub_event_id = key
+                        cat_div = event_block.find('div', class_='cal_cat')
+                        if cat_div:
+                            sub_event_type = Calendar.EventMapper.get_event_type(cat_div)
+
+                        a_div = match_div.find('a')
+                        if a_div:
+                            sub_event_content = a_div.text
+                            sub_event_links['event'] = Html.UriBuilder.get_uri(event_type) + a_div.get('href')
+                            m = re.search('quake/post/(\d+)/.*', sub_event_links['event'])
+                            if m:
+                                key = int(m.group(1))
+                                sub_event_id = key
 
                             time_div = match_div.findChild("div", class_="cal_time")
                             if time_div:
@@ -187,17 +187,17 @@ class Calendar:
                                 self.estimate_duration(sub_event)
                                 _events.append(sub_event)
 
-                    if event_id and event_type and event_start_time and event_category:
-                        _event = event.Event()
-                        _event.tl_id = event_id
-                        _event.match_count = event_match_count
-                        _event.category = event_category
-                        _event.stage = event_stage
-                        _event.start_time = event_start_time
-                        _event.type = event_type
-                        _event.links = event_links
-                        self.estimate_duration(_event)
-                        _events.append(_event)
+                if event_id and event_type and event_start_time and event_category:
+                    _event = event.Event()
+                    _event.tl_id = event_id
+                    _event.match_count = event_match_count
+                    _event.category = event_category
+                    _event.stage = event_stage
+                    _event.start_time = event_start_time
+                    _event.type = event_type
+                    _event.links = event_links
+                    self.estimate_duration(_event)
+                    _events.append(_event)
 
                 if len(_events) > 0:
                     self.events = _events
