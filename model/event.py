@@ -36,10 +36,14 @@ class Event:
                 self.tl_id == other.tl_id and
                 self.start_time == other.start_time and
                 self.end_time == other.end_time and
+                self.last_modified_time == other.last_modified_time and
                 self.type == other.type and
                 self.category == other.category and
                 self.stage == other.stage and
-                self.content == other.content
+                self.content == other.content and
+                self.links == other.links and
+                self.canceled == other.canceled and
+                True
             )
 
     def __repr__(self):
