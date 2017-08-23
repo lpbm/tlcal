@@ -41,12 +41,14 @@ soonish_events = MongoWrapper(debug=True).load_events(types, now, end_time)
 for _event in soonish_events:
     toot = False
     if not dry_run:
+        user_credentials = get_credentials(_event.type)
+        if user_credentials is None:
+            continue
         # Login using generated auth
         mastodon = Mastodon(
             client_id='app_credentials',
             api_base_url=user_credentials['url']
         )
-        user_credentials = get_credentials(_event.type)
         if len(user_credentials['email']) > 0 and len(user_credentials['password']) > 0:
             toot = True
         else:
@@ -62,9 +64,9 @@ for _event in soonish_events:
     in_minutes = when.total_seconds() / 60
     if len(_event.links):
         links = _event.links.values().join("\n")
-        post = "{} begins in {}minutes!\n{}\n\n#{}".format(title, in_minutes, links, _event.type)
+        post = "{} begins in {} min!\n{}\n\n#{}".format(title, int(in_minutes), links, _event.type)
     else:
-        post = "{} begins in {}minutes!\n\n#{}".format(title, in_minutes, _event.type)
+        post = "{} begins in {} min!\n\n#{}".format(title, int(in_minutes), _event.type)
 
     if debug:
         print(post)
