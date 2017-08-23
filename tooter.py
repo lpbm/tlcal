@@ -68,14 +68,21 @@ for _event in soonish_events:
     else:
         title = "{}".format(_event.category)
     storyid = _event.tl_id
-    when = _event.start_time - now
-    in_minutes = when.total_seconds() / 60
+    event_time = _event.start_time - now
+    in_minutes = int(event_time.total_seconds() / 60)
+    if in_minutes == 0:
+        when = "starts NOW !!"
+    else if in_minutes < 0:
+        when = "has started {} min ago!".format(abs(in_minutes))
+    else:
+        when = "begins in {} min!".format(abs(in_minutes))
+
     if len(_event.links):
         links = _event.links.values().join("\n")
 
-        post = "{} begins in {} min!\n{}\n\n#{}".format(title, int(in_minutes), links, _event.type)
+        post = "{} {}\n{}\n\n#{}".format(title, when, links, _event.type)
     else:
-        post = "{} begins in {} min!\n\n#{}".format(title, int(in_minutes), _event.type)
+        post = "{} {}\n\n#{}".format(title, when, _event.type)
 
     if debug:
         print(post)
