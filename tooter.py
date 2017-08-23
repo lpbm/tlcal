@@ -33,10 +33,10 @@ types = args.types
 dry_run = args.dry_run
 interval = args.interval
 
-start_time = datetime.now()
-end_time = start_time + timedelta(minutes=interval)
+now = datetime.now()
+end_time = now + timedelta(minutes=interval)
 
-soonish_events = MongoWrapper(debug=True).load_events(types, start_time, end_time)
+soonish_events = MongoWrapper(debug=True).load_events(types, now, end_time)
 
 for _event in soonish_events:
     toot = False
@@ -58,14 +58,12 @@ for _event in soonish_events:
     else:
         title = "[{}] {}".format(_event.type, _event.category)
     storyid = _event.tl_id
+    when = _event.start_time - now
     if len(_event.links):
         links = _event.links.values().join("\n")
-    post = '''{}
-    
-{}
-
-#{} 
-'''.format(title, links, _event.type)
+        post = "{} begins in {}minutes!\n{}\n\n#{}".format(title, when.minutes, links, _event.type)
+    else:
+        post = "{} begins in {}minutes!\n\n#{}".format(title, when.minutes, _event.type)
 
     if debug:
         print(post)
