@@ -19,6 +19,7 @@ default_types = plusfw_types + liquid_types
 parser = ArgumentParser(prog="tooter")
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not toot", const=True, default=False)
+parser.add_argument('--interval', nargs='?', help="Interval of minutes to search for events", const=True, default=5)
 parser.add_argument('--types', nargs='+',  help="Which types to load events for",
                     default=default_types[0], choices=default_types, metavar=default_types[0])
 
@@ -30,9 +31,10 @@ if len(argv) == 1:
 debug = args.debug
 types = args.types
 dry_run = args.dry_run
+interval = args.interval
 
 start_time = datetime.now()
-end_time = start_time + timedelta(minutes=5)
+end_time = start_time + timedelta(minutes=interval)
 
 soonish_events = MongoWrapper(debug=True).load_events(types, start_time, end_time)
 
