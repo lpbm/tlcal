@@ -34,9 +34,12 @@ dry_run = args.dry_run
 interval = args.interval
 
 now = datetime.now()
-end_time = now + timedelta(minutes=interval)
+now_with_interval = now + timedelta(minutes=interval)
 
-soonish_events = MongoWrapper(debug=True).load_events(types, now, end_time)
+start_time = min(now, now_with_interval)
+end_time = max(now, now_with_interval)
+
+soonish_events = MongoWrapper(debug=True).load_events(types, start_time, end_time)
 if debug:
     if len(soonish_events) == 0:
         print("No events found")
@@ -54,7 +57,7 @@ for _event in soonish_events:
             client_id='app_credentials',
             api_base_url=user_credentials['url']
         )
-        if len(user_credentials['email']) > 0 and len(user_credentials['password']) > 0:
+        if len(user_credentials['email']) > 0 and len(user_credentials['pass']) > 0:
             toot = True
         else:
             if debug:
