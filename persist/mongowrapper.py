@@ -97,8 +97,6 @@ class MongoWrapper:
             return _events
 
         what = {"type": {"$in": event_types}, "start_time": {"$gte": start_time, "$lte": end_time}}
-        if self.debug:
-            print("search: {}".format(what))
         cursor = self.db.events.find(what)
         cursor.max_time_ms = 200
 
