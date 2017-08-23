@@ -77,12 +77,11 @@ for _event in soonish_events:
     else:
         when = "begins in {} min!".format(abs(in_minutes))
 
-    if len(_event.links):
-        links = _event.links.values().join("\n")
+    links = ""
+    for key, link in _event.links.items():
+        links += "{}: {}\n".format(key, link)
 
-        post = "{} {}\n{}\n\n#{}".format(title, when, links, _event.type)
-    else:
-        post = "{} {}\n\n#{}".format(title, when, _event.type)
+    post = "{} {}\n\n{}\n#{}".format(title, when, links, _event.type)
 
     if debug:
         print(post)
