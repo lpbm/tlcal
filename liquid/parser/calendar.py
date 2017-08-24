@@ -167,7 +167,7 @@ class Calendar:
         link_blocks = soup.find("div", class_="evc-link")
 
         for link_block in link_blocks:
-            if link_block is None:
+            if not isinstance(link_block, Tag):
                 continue
 
             name = link_block.div.text

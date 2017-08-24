@@ -96,7 +96,7 @@ class MongoWrapper:
                 print("Could not load from MongoDB")
             return _events
 
-        what = {"type": {"$in": event_types}, "start_time": {"$gte": start_time, "$lte": end_time}}
+        what = {"type": {"$in": event_types}, "start_time": {"$gte": start_time, "$lte": end_time}, "canceled": False}
         cursor = self.db.events.find(what)
         cursor.max_time_ms = 200
 
@@ -110,8 +110,6 @@ class MongoWrapper:
             _event = decoder.decode(event)
             if not isinstance(_event, Event):
                 continue
-            if self.debug:
-                print(_event)
             _events.append(_event)
 
         return _events
