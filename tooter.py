@@ -63,7 +63,7 @@ if not dry_run:
 
 for _event in soonish_events:
     toot = False
-    if not dry_run and app_credentials['client_id'] is None or app_credentials['client_secret'] is None:
+    if not dry_run and 'client_id' in app_credentials and 'client_secret' in app_credentials:
         user_credentials = get_credentials(_event.type)
         if user_credentials is None:
             continue
@@ -103,9 +103,8 @@ for _event in soonish_events:
 
     post = "{} {}\n\n{}\n{}".format(title, when, links, hash_tags)
 
-    if debug:
-        print(post)
-
     if toot and not dry_run:
         mastodon.log_in(user_credentials['email'], user_credentials['pass'])
         mastodon.toot(post)
+        if debug:
+            print("tooted: {}".format(post))
