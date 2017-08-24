@@ -25,6 +25,7 @@ default_start = datetime.now() - timedelta(days=1)
 parser = ArgumentParser(prog="tlevents")
 parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
                     default=default_start.strftime("%Y-%m-%d"))
+parser.add_argument('--interval', nargs='?', help="Interval of days to search for events", type=int, default=1)
 parser.add_argument('--debug', nargs='?', help="Enable debug output", const=True, default=False)
 parser.add_argument('--dry-run', nargs='?', help="Do not persist", const=True, default=False)
 parser.add_argument('--calendar', nargs='+',  help="Which calendars to load events from",
@@ -37,7 +38,6 @@ if len(argv) == 1:
 
 debug = args.debug
 start = datetime.strptime(args.start_date, "%Y-%m-%d")
-days_delta = 1
 types = args.calendar
 dry_run = args.dry_run
 
@@ -49,10 +49,11 @@ else:
 
 encoder = EventEncoder()
 
-date = start
-date_end = start + timedelta(days=days_delta)
-
 for _type in types:
+    days_delta = args.interval
+    date = start
+    date_end = start + timedelta(days=days_delta)
+
     if debug:
         print("Loading events from calendar %s" % _type)
 
