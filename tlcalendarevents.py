@@ -41,7 +41,11 @@ days_delta = 1
 types = args.calendar
 dry_run = args.dry_run
 
-wrapper = MongoWrapper(debug=debug)
+if dry_run:
+    print('Need Mongo connection')
+    exit(1)
+else:
+    wrapper = MongoWrapper(debug=debug)
 
 encoder = EventEncoder()
 
