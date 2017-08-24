@@ -49,6 +49,14 @@ if debug:
     else:
         print("Found {} events".format(len(soonish_events)))
 
+tags = {
+    'sc2': ['SC2', 'StarCraft2'],
+    'qch': ['quake', 'QuakeChampions', 'quakecon', 'QWC'],
+    'dot': ['DotA2'],
+    'lol': ['LoL'],
+    'csg': ['CounterStrike', 'CS:GO'],
+}
+
 app_credentials = None
 if not dry_run:
     app_credentials = get_app_credentials()
@@ -89,7 +97,11 @@ for _event in soonish_events:
     for key, link in _event.links.items():
         links += "{}: {}\n".format(key, link)
 
-    post = "{} {}\n\n{}\n#{}".format(title, when, links, _event.type)
+    hash_tags = ""
+    for tag in tags[_event.type]:
+        hash_tags += "#{} ".format(tag)
+
+    post = "{} {}\n\n{}\n{}".format(title, when, links, hash_tags)
 
     if debug:
         print(post)
