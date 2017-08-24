@@ -1,4 +1,5 @@
 from sys import argv
+from math import ceil
 
 from argparse import ArgumentParser
 from mastodon import Mastodon
@@ -7,8 +8,10 @@ from datetime import datetime, timedelta
 from liquid.scraper.html import Html as liquid_Html
 from plusfw.scraper.html import Html as plusfw_Html
 try:
-    from credentials import get_credentials
+    from credentials import get_credentials, get_app_credentials
 except ImportError:
+    get_credentials = None
+    get_app_credentials = None
     print("Fatal error: credentials file is not accessible")
     exit(0)
 
@@ -46,15 +49,20 @@ if debug:
     else:
         print("Found {} events".format(len(soonish_events)))
 
+app_credentials = None
+if not dry_run:
+    app_credentials = get_app_credentials()
+
 for _event in soonish_events:
     toot = False
-    if not dry_run:
+    if not dry_run and app_credentials['client_id'] is None or app_credentials['client_secret'] is None:
         user_credentials = get_credentials(_event.type)
         if user_credentials is None:
             continue
         # Login using generated auth
         mastodon = Mastodon(
-            client_id='app_credentials',
+            client_id=app_credentials['client_id'],
+            client_secret=app_credentials['client_secret'],
             api_base_url=user_credentials['url']
         )
         if len(user_credentials['email']) > 0 and len(user_credentials['pass']) > 0:
@@ -69,7 +77,7 @@ for _event in soonish_events:
         title = "{}".format(_event.category)
     storyid = _event.tl_id
     event_time = _event.start_time - now
-    in_minutes = int(event_time.total_seconds() / 60)
+    in_minutes = ceil(event_time.total_seconds() / 60)
     if in_minutes == 0:
         when = "starts NOW !!"
     elif in_minutes < 0:
