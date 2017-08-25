@@ -9,58 +9,58 @@ class Html:
     """
 
     base_uris = {
-        liquid.TEAMLIQUID_LABEL: "http://www.teamliquid.net",
-        liquid.SC2_LABEL: "http://www.teamliquid.net",
-        liquid.BW_LABEL: "http://www.teamliquid.net",
-        liquid.CSGO_LABEL: "http://www.teamliquid.net",
-        liquid.HOTS_LABEL: "http://www.teamliquid.net",
-        liquid.SMASH_LABEL: "http://www.teamliquid.net",
-        liquid.HSTONE_LABEL: "http://www.liquidhearth.com",
-        liquid.DOTA_LABEL: "http://www.liquiddota.com",
-        liquid.LOL_LABEL: "http://www.liquidlegends.net",
+        liquid.LABEL_TEAMLIQUID: "http://www.teamliquid.net",
+        liquid.LABEL_SC2: "http://www.teamliquid.net",
+        liquid.LABEL_BW: "http://www.teamliquid.net",
+        liquid.LABEL_CSGO: "http://www.teamliquid.net",
+        liquid.LABEL_HOTS: "http://www.teamliquid.net",
+        liquid.LABEL_SMASH: "http://www.teamliquid.net",
+        liquid.LABEL_HSTONE: "http://www.liquidhearth.com",
+        liquid.LABEL_DOTA: "http://www.liquiddota.com",
+        liquid.LABEL_LOL: "http://www.liquidlegends.net",
     }
 
     calendar_path = {
-        liquid.TEAMLIQUID_LABEL: "/calendar/",
-        liquid.SC2_LABEL: "/calendar/",
-        liquid.BW_LABEL: "/calendar/",
-        liquid.CSGO_LABEL: "/calendar/",
-        liquid.HOTS_LABEL: "/calendar/",
-        liquid.SMASH_LABEL: "/calendar/",
-        liquid.HSTONE_LABEL: "/calendar/",
-        liquid.DOTA_LABEL: "/calendar/",
-        liquid.LOL_LABEL: "/calendar/",
+        liquid.LABEL_TEAMLIQUID: "/calendar/",
+        liquid.LABEL_SC2: "/calendar/",
+        liquid.LABEL_BW: "/calendar/",
+        liquid.LABEL_CSGO: "/calendar/",
+        liquid.LABEL_HOTS: "/calendar/",
+        liquid.LABEL_SMASH: "/calendar/",
+        liquid.LABEL_HSTONE: "/calendar/",
+        liquid.LABEL_DOTA: "/calendar/",
+        liquid.LABEL_LOL: "/calendar/",
     }
 
     event_path = {
-        liquid.TEAMLIQUID_LABEL: "/calendar/manage",
-        liquid.SC2_LABEL: "/calendar/manage",
-        liquid.BW_LABEL: "/calendar/manage",
-        liquid.CSGO_LABEL: "/calendar/manage",
-        liquid.HOTS_LABEL: "/calendar/manage",
-        liquid.SMASH_LABEL: "/calendar/manage",
-        liquid.HSTONE_LABEL: "/calendar/manage",
-        liquid.DOTA_LABEL: "/calendar/manage",
-        liquid.LOL_LABEL: "/calendar/manage",
+        liquid.LABEL_TEAMLIQUID: "/calendar/manage",
+        liquid.LABEL_SC2: "/calendar/manage",
+        liquid.LABEL_BW: "/calendar/manage",
+        liquid.LABEL_CSGO: "/calendar/manage",
+        liquid.LABEL_HOTS: "/calendar/manage",
+        liquid.LABEL_SMASH: "/calendar/manage",
+        liquid.LABEL_HSTONE: "/calendar/manage",
+        liquid.LABEL_DOTA: "/calendar/manage",
+        liquid.LABEL_LOL: "/calendar/manage",
     }
 
     calendar_type = {
-        liquid.SC2_LABEL: 1,
-        liquid.BW_LABEL: 2,
-        liquid.CSGO_LABEL: 3,
-        liquid.HOTS_LABEL: 4,
-        liquid.SMASH_LABEL: 5,
+        liquid.LABEL_SC2: 1,
+        liquid.LABEL_BW: 2,
+        liquid.LABEL_CSGO: 3,
+        liquid.LABEL_HOTS: 4,
+        liquid.LABEL_SMASH: 5,
     }
 
     class UriBuilder:
         """
         """
         @staticmethod
-        def get_uri(calendar=liquid.SC2_LABEL):
+        def get_uri(calendar=liquid.LABEL_SC2):
             return Html.base_uris[calendar]
 
         @staticmethod
-        def get_calendar_uri(calendar=liquid.SC2_LABEL, by_week=True, date=None):
+        def get_calendar_uri(calendar=liquid.LABEL_SC2, by_week=True, date=None):
             if by_week:
                 view_by = "week"
             else:
@@ -79,11 +79,11 @@ class Html:
             return url
 
         @staticmethod
-        def get_event_uri(calendar=liquid.SC2_LABEL):
+        def get_event_uri(calendar=liquid.LABEL_SC2):
             return Html.base_uris[calendar] + Html.event_path[calendar]
 
     @staticmethod
-    def get_calendar(calendar=liquid.SC2_LABEL, by_week=True, date=None, debug=False):
+    def get_calendar(calendar=liquid.LABEL_SC2, by_week=True, date=None, debug=False):
         """
         :param debug:
         :param date:
@@ -107,7 +107,7 @@ class Html:
             return ""
 
     @staticmethod
-    def get_event(calendar=liquid.SC2_LABEL, event_id=None, debug=True):
+    def get_event(calendar=liquid.LABEL_SC2, event_id=None, debug=True):
         if event_id is None:
             return ""
 

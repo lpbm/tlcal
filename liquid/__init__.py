@@ -8,17 +8,18 @@ __license__ = "MIT"
 
 __all__ = ['parser', 'scraper', 'load_from_date']
 
-SC2_LABEL = "sc2"
-SCREMASTERED_LABEL = "scrm"
-BW_LABEL = "bw"
-CSGO_LABEL = "csgo"
-HOTS_LABEL = "hots"
-SMASH_LABEL = "smash"
-HSTONE_LABEL = "hs"
-DOTA_LABEL = "dota"
-LOL_LABEL = "lol"
-TEAMLIQUID_LABEL = "tl"
-UNKNOWN_LABEL = "unk"
+LABEL_SC2 = "sc2"
+LABEL_SCREMASTERED = "scrm"
+LABEL_BW = "bw"
+LABEL_CSGO = "csgo"
+LABEL_HOTS = "hots"
+LABEL_SMASH = "smash"
+LABEL_HSTONE = "hs"
+LABEL_DOTA = "dota"
+LABEL_LOL = "lol"
+LABEL_OWATCH = "ovw"
+LABEL_TEAMLIQUID = "tl"
+LABEL_UNKNOWN = "unk"
 
 
 def load_from_date(type_="sc2", date=None, persist=None, debug=False):
