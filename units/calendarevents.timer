@@ -3,7 +3,7 @@ Description=Run tl-events.service every couple of hours
 
 [Timer]
 RandomizedDelaySec=3654
-OnCalendar=*:00,06,10,13,16,19,22:00
+OnCalendar=*-*-* 00,06,10,13,16,19,22:00:00
 
 [Install]
 WantedBy=timers.target

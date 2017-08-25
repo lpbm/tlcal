@@ -1,5 +1,5 @@
 [Unit]
-Description=Event scraper for ESports events
+Description=Scraper for ESports events
 After=network.target
 
 [Service]
