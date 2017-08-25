@@ -53,8 +53,8 @@ tags = {
     'sc2': ['SC2', 'StarCraft2'],
     'qch': ['quake', 'QuakeChampions', 'quakecon', 'QWC'],
     'dot': ['DotA2'],
-    'lol': ['LoL'],
-    'csg': ['CounterStrike', 'CS:GO'],
+    'lol': ['LoL', 'LeagueOfLegends'],
+    'csg': ['CounterStrike', 'CS_GO'],
 }
 
 app_credentials = None
