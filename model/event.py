@@ -23,7 +23,6 @@ class Event:
 
     def is_valid(self):
         return (
-            # ((len(self.category) > 0) or (len(self.stage) > 0)) and
             (self.start_time is not None) and
             (self.cal_id > 0)
         )
@@ -36,7 +35,6 @@ class Event:
                 self.cal_id == other.cal_id and
                 self.start_time == other.start_time and
                 self.end_time == other.end_time and
-                self.last_modified_time == other.last_modified_time and
                 self.type == other.type and
                 self.category == other.category and
                 self.stage == other.stage and
