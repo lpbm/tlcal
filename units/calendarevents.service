@@ -5,6 +5,6 @@ After=network.target
 [Service]
 Type=simple
 
-ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/calendarevents.py --calendar sc2 brw csg hot sma dot lol hrt pfw
+ExecStart=/home/habarnam/abs/tlcal/calendarevents --calendar sc2 brw csg hot sma dot lol hrt pfw
 
 

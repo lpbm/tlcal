@@ -7,5 +7,5 @@ WorkingDirectory=/home/habarnam/abs/tlcal
 Type=simple
 SyslogLevel=err
 
-ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tooter.py --type sc2 qch dot csg lol --debug
+ExecStart=/home/habarnam/abs/tlcal/tooter --type sc2 qch dot csg lol --debug
 
