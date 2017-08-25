@@ -1,0 +1,11 @@
+[Unit]
+Description=Event scraper for ESports events
+After=network.target
+
+[Service]
+Type=simple
+SyslogLevel=err
+
+ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/calendarevents.py --calendar sc2 brw csg hot sma dot lol hrt pfw
+
+
