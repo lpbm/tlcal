@@ -86,7 +86,6 @@ class Html:
         plusfw.LABEL_XONOT: 18,
         plusfw.LABEL_QCHAMP: 20,
         plusfw.LABEL_QCPMA: 21,
-        plusfw.LABEL_PFW: 999,
     }
 
     class UriBuilder:
@@ -131,11 +130,13 @@ class Html:
         if debug:
             print("Loading calendar from: %s" % calendar_uri)
 
-        post_data = {
-            "cat": str(Html.calendar_type[calendar])
-        }
+        post_data = None
+        if calendar in Html.calendar_type:
+            post_data = {
+                "cat": str(Html.calendar_type[calendar])
+            }
         try:
-            if calendar != plusfw.LABEL_PFW:
+            if post_data:
                 tl_response = post(calendar_uri, post_data)
             else:
                 tl_response = get(calendar_uri)
