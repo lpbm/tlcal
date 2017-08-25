@@ -6,5 +6,5 @@ After=network.target
 WorkingDirectory=BIN_DIR
 Type=oneshot
 
-ExecStart=BIN_DIR/tooter --type sc2 qch dot csg lol
+ExecStart=BIN_DIR/tooter --type sc2 qch dota csgo lol
 
