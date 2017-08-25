@@ -1,0 +1,11 @@
+[Unit]
+Description=Event scraper for ESports events
+After=network.target
+
+[Service]
+WorkingDirectory=BIN_DIR
+Type=oneshot
+
+ExecStart=BIN_DIR/calendarevents --calendar sc2 brw csg hot sma dot lol hrt pfw
+
+

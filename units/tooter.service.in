@@ -1,0 +1,10 @@
+[Unit]
+Description=Mastodon tooter for ESport events
+After=network.target
+
+[Service]
+WorkingDirectory=BIN_DIR
+Type=oneshot
+
+ExecStart=BIN_DIR/tooter --type sc2 qch dot csg lol
+

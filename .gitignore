@@ -1,4 +1,4 @@
 __pycache__/
 .idea/
-app_credentials
 credentials.py
+units/*.service
