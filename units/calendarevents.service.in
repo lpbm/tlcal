@@ -6,6 +6,6 @@ After=network.target
 WorkingDirectory=BIN_DIR
 Type=oneshot
 
-ExecStart=BIN_DIR/calendarevents --calendar sc2 brw csg hot sma dot lol hrt pfw
+ExecStart=BIN_DIR/calendarevents --calendar tl hs dota lol pfw
 
 
