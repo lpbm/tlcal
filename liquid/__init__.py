@@ -18,7 +18,7 @@ HSTONE_LABEL = "hs"
 DOTA_LABEL = "dota"
 LOL_LABEL = "lol"
 TEAMLIQUID_LABEL = "tl"
-LABEL_UNKNOWN = "unk"
+UNKNOWN_LABEL = "unk"
 
 
 def load_from_date(type_="sc2", date=None, persist=None, debug=False):

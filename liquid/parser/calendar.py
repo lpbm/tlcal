@@ -15,12 +15,12 @@ class Calendar:
 
     class EventMapper:
         event_types = {
-            0: liquid.LABEL_UNKNOWN,
-            1: liquid.LABEL_SC2,
-            2: liquid.LABEL_BW,
-            3: liquid.LABEL_CSGO,
-            4: liquid.LABEL_HOTS,
-            5: liquid.LABEL_SMASH
+            0: liquid.UNKNOWN_LABEL,
+            1: liquid.SC2_LABEL,
+            2: liquid.BW_LABEL,
+            3: liquid.CSGO_LABEL,
+            4: liquid.HOTS_LABEL,
+            5: liquid.SMASH_LABEL
         }
         """
         A class get the event type
@@ -45,7 +45,7 @@ class Calendar:
         self.events = []
         self.debug = debug
 
-    def load_calendar(self, calendar=liquid.LABEL_SC2, raw_content=""):
+    def load_calendar(self, calendar=liquid.SC2_LABEL, raw_content=""):
         """
         :param calendar: string
         :param raw_content: string
@@ -89,7 +89,7 @@ class Calendar:
                         continue
 
                     _event = event.Event()
-                    if calendar == liquid.LABEL_SC2:
+                    if calendar == liquid.SC2_LABEL:
                         _event.type = Calendar.EventMapper.get_event_type(event_block)
                     else:
                         _event.type = calendar
@@ -154,7 +154,7 @@ class Calendar:
         _event.end_time = _event.start_time + duration
         return duration
 
-    def load_event_info(self, event_content, calendar=liquid.LABEL_SC2):
+    def load_event_info(self, event_content, calendar=liquid.SC2_LABEL):
         """
         :cal_id: int
         :return:
