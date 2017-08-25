@@ -104,7 +104,7 @@ class Calendar:
                     title_div = event_block.find("div", class_="ev-ctrl")
                     if title_div:
                         _event.category = title_div.span.contents[0]
-                        _event.tl_id = int(title_div.span["data-event-id"])
+                        _event.cal_id = int(title_div.span["data-event-id"])
 
                     stage_block = event_block.find("div", class_="ev-stage")
                     if stage_block and len(stage_block.contents) > 0:
@@ -154,7 +154,7 @@ class Calendar:
 
     def load_event_info(self, event_content, calendar="sc2"):
         """
-        :tl_id: int
+        :cal_id: int
         :return:
         """
         if len(event_content) == 0:

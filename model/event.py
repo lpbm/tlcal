@@ -3,7 +3,7 @@ class Event:
     """
         A simple class for an event
     """
-    tl_id = 0
+    cal_id = 0
     start_time = None
     end_time = None
     last_modified_time = None
@@ -25,7 +25,7 @@ class Event:
         return (
             # ((len(self.category) > 0) or (len(self.stage) > 0)) and
             (self.start_time is not None) and
-            (self.tl_id > 0)
+            (self.cal_id > 0)
         )
 
     def __eq__(self, other):
@@ -33,7 +33,7 @@ class Event:
             return False
         else:
             return (
-                self.tl_id == other.tl_id and
+                self.cal_id == other.cal_id and
                 self.start_time == other.start_time and
                 self.end_time == other.end_time and
                 self.last_modified_time == other.last_modified_time and

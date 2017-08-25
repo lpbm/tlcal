@@ -177,7 +177,7 @@ class Calendar:
                             if sub_event_type and sub_event_start_time and event_category:
                                 event_match_count += 1
                                 sub_event = event.Event()
-                                sub_event.tl_id = sub_event_id
+                                sub_event.cal_id = sub_event_id
                                 sub_event.category = event_category
                                 sub_event.stage = event_stage
                                 sub_event.content = sub_event_content
@@ -189,7 +189,7 @@ class Calendar:
 
                 if event_id and event_type and event_start_time and event_category:
                     _event = event.Event()
-                    _event.tl_id = event_id
+                    _event.cal_id = event_id
                     _event.match_count = event_match_count
                     _event.category = event_category
                     _event.stage = event_stage
@@ -224,7 +224,7 @@ class Calendar:
 
     def load_event_info(self, event_content, calendar="qch"):
         """
-        :tl_id: int
+        :cal_id: int
         :return:
         """
         if len(event_content) == 0:

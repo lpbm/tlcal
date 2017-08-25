@@ -83,7 +83,7 @@ for _event in soonish_events:
         title = "{}: {}".format(_event.category, _event.stage)
     else:
         title = "{}".format(_event.category)
-    storyid = _event.tl_id
+    storyid = _event.cal_id
     event_time = _event.start_time - now
     in_minutes = ceil(event_time.total_seconds() / 60)
     if in_minutes == 0:

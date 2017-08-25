@@ -39,19 +39,19 @@ class MongoWrapper:
         types = []
 
         for _event in _events:
-            ids.append(_event.tl_id)
+            ids.append(_event.cal_id)
             min_date = min(_event.start_time, min_date)
             max_date = max(_event.start_time, max_date)
             if _event.type not in types:
                 types.append(_event.type)
 
             if isinstance(_event, Event):
-                original = self.db.events.find_one({"_id": _event.tl_id})
+                original = self.db.events.find_one({"cal_id": _event.cal_id, "type": _event.type, "start_time": _event.start_time, "end_time": _event.end_time})
                 if original is None:
                     _event.last_modified_time = datetime.now()
                     result = self.db.events.insert_one(encoder.encode(_event))
                     """ :type : pymongo.results.InsertOneResult """
-                    if result.inserted_id > 0:
+                    if result.inserted_id:
                         success['inserts'] += 1
                     else:
                         failed['inserts'] += 1
@@ -70,11 +70,17 @@ class MongoWrapper:
                         skipped += 1
 
         if delete:
-            what = {"_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
+            what = {"cal_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)
             for db_event in cursor:
-                canceled = self.db.events.find_one_and_update({"_id": db_event["_id"]}, {"$set": {"canceled": True}},
-                                                              return_document=ReturnDocument.AFTER)
+                canceled = self.db.events.find_one_and_update(
+                    {
+                        "cal_id": db_event["cal_id"], 
+                        "type": db_event["type"], 
+                        "start_date": db_event["start_date"],
+                        "end_date": db_event["end_date"],
+                    }, {"$set": {"canceled": True}},
+                    return_document=ReturnDocument.AFTER)
                 if canceled["canceled"]:
                     success['deleted'] += 1
                 else:
@@ -108,8 +114,7 @@ class MongoWrapper:
 
         for event in cursor:
             _event = decoder.decode(event)
-            if not isinstance(_event, Event):
-                continue
-            _events.append(_event)
+            if isinstance(_event, Event):
+                _events.append(_event)
 
         return _events
