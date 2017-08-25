@@ -74,14 +74,17 @@ class MongoWrapper:
             what = {"cal_id": {"$nin": ids}, "type": {"$in": types}, "start_time": {"$gte": min_date, "$lte": max_date}}
             cursor = self.db.events.find(what)
             for db_event in cursor:
-                canceled = self.db.events.find_one_and_update(
-                    {
-                        "cal_id": db_event["cal_id"], 
-                        "type": db_event["type"], 
-                        "start_date": db_event["start_date"],
-                        "end_date": db_event["end_date"],
-                    }, {"$set": {"canceled": True}},
-                    return_document=ReturnDocument.AFTER)
+                search = {
+                    "cal_id": db_event["cal_id"],
+                    "type": db_event["type"],
+                }
+                if 'start_date' in db_event:
+                    search["start_date"] = db_event["start_date"]
+                if 'end_date' in db_event:
+                    search["end_date"] = db_event["end_date"]
+
+                canceled = self.db.events.find_one_and_update(search, {"$set": {"canceled": True}},
+                                                              return_document=ReturnDocument.AFTER)
                 if canceled["canceled"]:
                     success['deleted'] += 1
                 else:
