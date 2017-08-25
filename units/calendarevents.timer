@@ -2,7 +2,7 @@
 Description=Run tl-events.service every 211 minutes
 
 [Timer]
-OnCalendar=*0:0:0/211
+OnCalendar=*-*-* 00:00:00/211
 
 [Install]
 WantedBy=timers.target
