@@ -1,9 +1,9 @@
 [Unit]
-Description=Run tooter.service every 5 minutes after the hour
+Description=Run tooter.service every 5 minutes
 
 [Timer]
 RandomizedDelaySec=11
-OnCalendar=*:0:0/5
+OnCalendar=*:00/5:00
 
 [Install]
 WantedBy=timers.target
