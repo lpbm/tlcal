@@ -12,8 +12,9 @@ class MongoWrapper:
     def __init__(self, debug=False):
         self.debug = debug
         try:
-            self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=300')
-            self.db = self.client.tlcalendar
+            self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=10')
+            self.db = self.client.calendar
+            self.client.server_info()
         except PyMongoError:
             self.client = None
             self.db = None
@@ -25,7 +26,7 @@ class MongoWrapper:
         failed = {"inserts": 0, "updates": 0, "deleted": 0}
         skipped = 0
 
-        if not isinstance(self.db, Database):
+        if self.db is None or self.client is None:
             if self.debug:
                 print("Could not persist to MongoDB")
             return False
