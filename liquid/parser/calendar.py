@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup, Tag
 
+import liquid
 from liquid.scraper.html import Html
 from model import event
 
@@ -14,12 +15,12 @@ class Calendar:
 
     class EventMapper:
         event_types = {
-            0: "unk",
-            1: "sc2",
-            2: "bw",
-            3: "csgo",
-            4: "hots",
-            5: "smash"
+            0: liquid.LABEL_UNKNOWN,
+            1: liquid.LABEL_SC2,
+            2: liquid.LABEL_BW,
+            3: liquid.LABEL_CSGO,
+            4: liquid.LABEL_HOTS,
+            5: liquid.LABEL_SMASH
         }
         """
         A class get the event type
@@ -44,7 +45,7 @@ class Calendar:
         self.events = []
         self.debug = debug
 
-    def load_calendar(self, calendar="sc2", raw_content=""):
+    def load_calendar(self, calendar=liquid.LABEL_SC2, raw_content=""):
         """
         :param calendar: string
         :param raw_content: string
@@ -88,7 +89,7 @@ class Calendar:
                         continue
 
                     _event = event.Event()
-                    if calendar == "sc2":
+                    if calendar == liquid.LABEL_SC2:
                         _event.type = Calendar.EventMapper.get_event_type(event_block)
                     else:
                         _event.type = calendar
@@ -137,22 +138,23 @@ class Calendar:
         return True
 
     @staticmethod
-    def estimate_duration(event):
+    def estimate_duration(_event):
         """
         I need to fix this, the match duration depends on the event type
         return:timedelta
+        :type _event: event.Event
         """
         match_duration = 40
-        if len(event.content) > 0:
-            m = re.findall(' vs ', event.content)
+        if len(_event.content) > 0:
+            m = re.findall(' vs ', _event.content)
             if len(m) > 0:
-                event.match_count = len(m)
+                _event.match_count = len(m)
 
-        duration = timedelta(minutes=event.match_count * match_duration)
-        event.end_time = event.start_time + duration
+        duration = timedelta(minutes=_event.match_count * match_duration)
+        _event.end_time = _event.start_time + duration
         return duration
 
-    def load_event_info(self, event_content, calendar="sc2"):
+    def load_event_info(self, event_content, calendar=liquid.LABEL_SC2):
         """
         :cal_id: int
         :return:

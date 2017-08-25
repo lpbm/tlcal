@@ -1,3 +1,4 @@
+import liquid
 from datetime import datetime
 from requests import get, post, codes, exceptions
 import json
@@ -8,55 +9,56 @@ class Html:
     """
 
     base_uris = {
-        "sc2": "http://www.teamliquid.net",
-        "brw": "http://www.teamliquid.net",
-        "csg": "http://www.teamliquid.net",
-        "hot": "http://www.teamliquid.net",
-        "sma": "http://www.teamliquid.net",
-        "hrt": "http://www.liquidhearth.com",
-        "dot": "http://www.liquiddota.com",
-        "lol": "http://www.liquidlegends.net",
+        liquid.SC2_LABEL: "http://www.teamliquid.net",
+        liquid.BW_LABEL: "http://www.teamliquid.net",
+        liquid.CSGO_LABEL: "http://www.teamliquid.net",
+        liquid.HOTS_LABEL: "http://www.teamliquid.net",
+        liquid.SMASH_LABEL: "http://www.teamliquid.net",
+        liquid.HSTONE_LABEL: "http://www.liquidhearth.com",
+        liquid.DOTA_LABEL: "http://www.liquiddota.com",
+        liquid.LOL_LABEL: "http://www.liquidlegends.net",
     }
 
     calendar_path = {
-        "sc2": "/calendar/",
-        "brw": "/calendar/",
-        "csg": "/calendar/",
-        "hot": "/calendar/",
-        "sma": "/calendar/",
-        "hrt": "/calendar/",
-        "dot": "/calendar/",
-        "lol": "/calendar/",
+        liquid.SC2_LABEL: "/calendar/",
+        liquid.BW_LABEL: "/calendar/",
+        liquid.CSGO_LABEL: "/calendar/",
+        liquid.HOTS_LABEL: "/calendar/",
+        liquid.SMASH_LABEL: "/calendar/",
+        liquid.HSTONE_LABEL: "/calendar/",
+        liquid.DOTA_LABEL: "/calendar/",
+        liquid.LOL_LABEL: "/calendar/",
     }
 
     event_path = {
-        "sc2": "/calendar/manage",
-        "brw": "/calendar/manage",
-        "csg": "/calendar/manage",
-        "hot": "/calendar/manage",
-        "sma": "/calendar/manage",
-        "hrt": "/calendar/manage",
-        "dot": "/calendar/manage",
-        "lol": "/calendar/manage",
+        liquid.SC2_LABEL: "/calendar/manage",
+        liquid.BW_LABEL: "/calendar/manage",
+        liquid.CSGO_LABEL: "/calendar/manage",
+        liquid.HOTS_LABEL: "/calendar/manage",
+        liquid.SMASH_LABEL: "/calendar/manage",
+        liquid.HSTONE_LABEL: "/calendar/manage",
+        liquid.DOTA_LABEL: "/calendar/manage",
+        liquid.LOL_LABEL: "/calendar/manage",
     }
 
     calendar_type = {
-        "sc2": 1,
-        "brw": 2,
-        "csg": 3,
-        "hot": 4,
-        "sma": 5,
+        liquid.SC2_LABEL: 1,
+        liquid.BW_LABEL: 2,
+        liquid.CSGO_LABEL: 3,
+        liquid.HOTS_LABEL: 4,
+        liquid.SMASH_LABEL: 5,
+        liquid.TEAMLIQUID_LABEL: 999,
     }
 
     class UriBuilder:
         """
         """
         @staticmethod
-        def get_uri(calendar="sc2"):
+        def get_uri(calendar=liquid.SC2_LABEL):
             return Html.base_uris[calendar]
 
         @staticmethod
-        def get_calendar_uri(calendar="sc2", by_week=True, date=None):
+        def get_calendar_uri(calendar=liquid.SC2_LABEL, by_week=True, date=None):
             if by_week:
                 view_by = "week"
             else:
@@ -75,11 +77,11 @@ class Html:
             return url
 
         @staticmethod
-        def get_event_uri(calendar="sc2"):
+        def get_event_uri(calendar=liquid.SC2_LABEL):
             return Html.base_uris[calendar] + Html.event_path[calendar]
 
     @staticmethod
-    def get_calendar(calendar="sc2", by_week=True, date=None, debug=False):
+    def get_calendar(calendar=liquid.SC2_LABEL, by_week=True, date=None, debug=False):
         """
         :param debug:
         :param date:
@@ -103,7 +105,7 @@ class Html:
             return ""
 
     @staticmethod
-    def get_event(calendar="sc2", event_id=None, debug=True):
+    def get_event(calendar=liquid.SC2_LABEL, event_id=None, debug=True):
         if event_id is None:
             return ""
 

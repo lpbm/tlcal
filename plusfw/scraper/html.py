@@ -1,3 +1,5 @@
+import plusfw
+
 from datetime import datetime
 from requests import get, post, codes, exceptions
 import json
@@ -8,88 +10,83 @@ class Html:
     """
 
     base_uris = {
-        # +->
-        "pfw": "https://www.plusforward.net",
-        "qlv": "https://www.plusforward.net",
-        "qiv": "https://www.plusforward.net",
-        "qiii": "https://www.plusforward.net",
-        "qii": "https://www.plusforward.net",
-        "qw": "https://www.plusforward.net",
-        "dbt": "https://www.plusforward.net",
-        "doom": "https://www.plusforward.net",
-        "rfl": "https://www.plusforward.net",
-        "ovw": "https://www.plusforward.net",
-        "gg": "https://www.plusforward.net",
-        "ut": "https://www.plusforward.net",
-        "wsw": "https://www.plusforward.net",
-        "dbmb": "https://www.plusforward.net",
-        "xnt": "https://www.plusforward.net",
-        "qch": "https://www.plusforward.net",
-        "cpma": "https://www.plusforward.net",
+        plusfw.LABEL_PFW: "https://www.plusforward.net",
+        plusfw.LABEL_QLIVE: "https://www.plusforward.net",
+        plusfw.LABEL_QIV: "https://www.plusforward.net",
+        plusfw.LABEL_QIII: "https://www.plusforward.net",
+        plusfw.LABEL_QII: "https://www.plusforward.net",
+        plusfw.LABEL_QWORLD: "https://www.plusforward.net",
+        plusfw.LABEL_DIABOT: "https://www.plusforward.net",
+        plusfw.LABEL_DOOM: "https://www.plusforward.net",
+        plusfw.LABEL_REFLEX: "https://www.plusforward.net",
+        plusfw.LABEL_OWATCH: "https://www.plusforward.net",
+        plusfw.LABEL_GG: "https://www.plusforward.net",
+        plusfw.LABEL_UNREAL: "https://www.plusforward.net",
+        plusfw.LABEL_WARSOW: "https://www.plusforward.net",
+        plusfw.LABEL_DBMB: "https://www.plusforward.net",
+        plusfw.LABEL_XONOT: "https://www.plusforward.net",
+        plusfw.LABEL_QCHAMP: "https://www.plusforward.net",
+        plusfw.LABEL_QCPMA: "https://www.plusforward.net",
     }
 
     calendar_path = {
-        # +->
-        "pfw": "/calendar/",
-        "qlv": "/calendar/",
-        "qiv": "/calendar/",
-        "qiii": "/calendar/",
-        "qii": "/calendar/",
-        "qw": "/calendar/",
-        "dbt": "/calendar/",
-        "doom": "/calendar/",
-        "rfl": "/calendar/",
-        "ovw": "/calendar/",
-        "gg": "/calendar/",
-        "ut": "/calendar/",
-        "wsw": "/calendar/",
-        "dbmb": "/calendar/",
-        "xnt": "/calendar/",
-        "qch": "/calendar/",
-        "cpma": "/calendar/",
+        plusfw.LABEL_PFW: "/calendar/",
+        plusfw.LABEL_QLIVE: "/calendar/",
+        plusfw.LABEL_QIV: "/calendar/",
+        plusfw.LABEL_QIII: "/calendar/",
+        plusfw.LABEL_QII: "/calendar/",
+        plusfw.LABEL_QWORLD: "/calendar/",
+        plusfw.LABEL_DIABOT: "/calendar/",
+        plusfw.LABEL_DOOM: "/calendar/",
+        plusfw.LABEL_REFLEX: "/calendar/",
+        plusfw.LABEL_OWATCH: "/calendar/",
+        plusfw.LABEL_GG: "/calendar/",
+        plusfw.LABEL_UNREAL: "/calendar/",
+        plusfw.LABEL_WARSOW: "/calendar/",
+        plusfw.LABEL_DBMB: "/calendar/",
+        plusfw.LABEL_XONOT: "/calendar/",
+        plusfw.LABEL_QCHAMP: "/calendar/",
+        plusfw.LABEL_QCPMA: "/calendar/",
     }
 
     event_path = {
-        # +->
-        "pwf": "/calendar/manage/",
-        "qlv": "/calendar/manage/",
-        "qiv": "/calendar/manage/",
-        "qiii": "/calendar/manage/",
-        "qii": "/calendar/manage/",
-        "qw": "/calendar/manage/",
-        "dbt": "/calendar/manage/",
-        "doom": "/calendar/manage/",
-        "rfl": "/calendar/manage/",
-        "ovw": "/calendar/manage/",
-        "gg": "/calendar/manage/",
-        "ut": "/calendar/manage/",
-        "wsw": "/calendar/manage/",
-        "dbmb": "/calendar/manage/",
-        "xnt": "/calendar/manage/",
-        "qch": "/calendar/manage/",
-        "cpma": "/calendar/manage/",
+        plusfw.LABEL_PFW: "/calendar/manage/",
+        plusfw.LABEL_QLIVE: "/calendar/manage/",
+        plusfw.LABEL_QIV: "/calendar/manage/",
+        plusfw.LABEL_QIII: "/calendar/manage/",
+        plusfw.LABEL_QII: "/calendar/manage/",
+        plusfw.LABEL_QWORLD: "/calendar/manage/",
+        plusfw.LABEL_DIABOT: "/calendar/manage/",
+        plusfw.LABEL_DOOM: "/calendar/manage/",
+        plusfw.LABEL_REFLEX: "/calendar/manage/",
+        plusfw.LABEL_OWATCH: "/calendar/manage/",
+        plusfw.LABEL_GG: "/calendar/manage/",
+        plusfw.LABEL_UNREAL: "/calendar/manage/",
+        plusfw.LABEL_WARSOW: "/calendar/manage/",
+        plusfw.LABEL_DBMB: "/calendar/manage/",
+        plusfw.LABEL_XONOT: "/calendar/manage/",
+        plusfw.LABEL_QCHAMP: "/calendar/manage/",
+        plusfw.LABEL_QCPMA: "/calendar/manage/",
     }
 
     calendar_type = {
-        # +->
-        "unk": 0,
-        "qlv": 3,
-        "qiv": 4,
-        "qiii": 5,
-        "qii": 6,
-        "qw": 7,
-        "dbt": 8,
-        "doom": 9,
-        "rfl": 10,
-        "ovw": 13,
-        "gg": 14,
-        "ut": 15,
-        "wsw": 16,
-        "dbmb": 17,
-        "xnt": 18,
-        "qch": 20,
-        "cpma": 21,
-        "pfw": 999,
+        plusfw.LABEL_QLIVE: 3,
+        plusfw.LABEL_QIV: 4,
+        plusfw.LABEL_QIII: 5,
+        plusfw.LABEL_QII: 6,
+        plusfw.LABEL_QWORLD: 7,
+        plusfw.LABEL_DIABOT: 8,
+        plusfw.LABEL_DOOM: 9,
+        plusfw.LABEL_REFLEX: 10,
+        plusfw.LABEL_OWATCH: 13,
+        plusfw.LABEL_GG: 14,
+        plusfw.LABEL_UNREAL: 15,
+        plusfw.LABEL_WARSOW: 16,
+        plusfw.LABEL_DBMB: 17,
+        plusfw.LABEL_XONOT: 18,
+        plusfw.LABEL_QCHAMP: 20,
+        plusfw.LABEL_QCPMA: 21,
+        plusfw.LABEL_PFW: 999,
     }
 
     class UriBuilder:
@@ -97,11 +94,11 @@ class Html:
         """
 
         @staticmethod
-        def get_uri(calendar="pfw"):
+        def get_uri(calendar=plusfw.LABEL_PFW):
             return Html.base_uris[calendar]
 
         @staticmethod
-        def get_calendar_uri(calendar="pfw", by_week=True, date=None):
+        def get_calendar_uri(calendar=plusfw.LABEL_PFW, by_week=True, date=None):
             if by_week:
                 view_by = "week"
             else:
@@ -117,7 +114,7 @@ class Html:
             return url
 
         @staticmethod
-        def get_event_uri(calendar="pfw"):
+        def get_event_uri(calendar=plusfw.LABEL_PFW):
             return Html.base_uris[calendar] + Html.event_path[calendar]
 
     @staticmethod
@@ -138,7 +135,7 @@ class Html:
             "cat": str(Html.calendar_type[calendar])
         }
         try:
-            if calendar != "pfw":
+            if calendar != plusfw.LABEL_PFW:
                 tl_response = post(calendar_uri, post_data)
             else:
                 tl_response = get(calendar_uri)
@@ -151,7 +148,7 @@ class Html:
             return ""
 
     @staticmethod
-    def get_event(calendar="qch", event_id=None, debug=True):
+    def get_event(calendar=plusfw.LABEL_QCHAMP, event_id=None, debug=True):
         if event_id is None:
             return ""
 

@@ -1,9 +1,10 @@
 import re
-import copy
+
 from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup, Tag
 
+import plusfw
 from plusfw.scraper.html import Html
 from model import event
 
@@ -15,23 +16,23 @@ class Calendar:
 
     class EventMapper:
         event_types = {
-            0: "unk",
-            3: "qlv",
-            4: "qiv",
-            5: "q3",
-            6: "qii",
-            7: "qw",
-            8: "dbt",
-            9: "doom",
-            10: "rfl",
-            13: "ovw",
-            14: "gg",
-            15: "ut",
-            16: "wsw",
-            17: "dbmb",
-            18: "xnt",
-            20: "qch",
-            21: "cpma",
+            0: plusfw.LABEL_UNKNOWN,
+            3: plusfw.LABEL_QLIVE,
+            4: plusfw.LABEL_QIV,
+            5: plusfw.LABEL_QIII,
+            6: plusfw.LABEL_QII,
+            7: plusfw.LABEL_QWORLD,
+            8: plusfw.LABEL_DIABOT,
+            9: plusfw.LABEL_DOOM,
+            10: plusfw.LABEL_REFLEX,
+            13: plusfw.LABEL_OWATCH,
+            14: plusfw.LABEL_GG,
+            15: plusfw.LABEL_UNREAL,
+            16: plusfw.LABEL_WARSOW,
+            17: plusfw.LABEL_DBMB,
+            18: plusfw.LABEL_XONOT,
+            20: plusfw.LABEL_QCHAMP,
+            21: plusfw.LABEL_QCPMA,
         }
         """
         A class get the event type
@@ -59,7 +60,7 @@ class Calendar:
         self.events = []
         self.debug = debug
 
-    def load_calendar(self, calendar="qch", raw_content=""):
+    def load_calendar(self, calendar=plusfw.LABEL_QCHAMP, raw_content=""):
         """
         :param calendar: string
         :param raw_content: string
@@ -214,18 +215,19 @@ class Calendar:
         return True
 
     @staticmethod
-    def estimate_duration(event):
+    def estimate_duration(_event):
         """
         I need to fix this, the match duration depends on the event type
         return:timedelta
+        :type _event: event.Event
         """
         match_duration = 30
         buffer_duration = 15
-        duration = timedelta(minutes=(event.match_count * (match_duration + buffer_duration) - buffer_duration))
-        event.end_time = event.start_time + duration
+        duration = timedelta(minutes=(_event.match_count * (match_duration + buffer_duration) - buffer_duration))
+        _event.end_time = _event.start_time + duration
         return match_duration
 
-    def load_event_info(self, event_content, calendar="qch"):
+    def load_event_info(self, event_content, calendar=plusfw.LABEL_QCHAMP):
         """
         :cal_id: int
         :return:
