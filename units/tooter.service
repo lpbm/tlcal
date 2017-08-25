@@ -1,0 +1,11 @@
+[Unit]
+Description=Mastodon tooter for ESport events
+After=network.target
+
+[Service]
+WorkingDirectory=/home/habarnam/abs/tlcal
+Type=simple
+SyslogLevel=err
+
+ExecStart=/usr/bin/python /home/habarnam/abs/tlcal/tooter.py --type sc2 qch dot csg lol --debug
+
