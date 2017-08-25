@@ -9,6 +9,7 @@ class Html:
     """
 
     base_uris = {
+        liquid.TEAMLIQUID_LABEL: "http://www.teamliquid.net",
         liquid.SC2_LABEL: "http://www.teamliquid.net",
         liquid.BW_LABEL: "http://www.teamliquid.net",
         liquid.CSGO_LABEL: "http://www.teamliquid.net",
@@ -20,6 +21,7 @@ class Html:
     }
 
     calendar_path = {
+        liquid.TEAMLIQUID_LABEL: "/calendar/",
         liquid.SC2_LABEL: "/calendar/",
         liquid.BW_LABEL: "/calendar/",
         liquid.CSGO_LABEL: "/calendar/",
@@ -31,6 +33,7 @@ class Html:
     }
 
     event_path = {
+        liquid.TEAMLIQUID_LABEL: "/calendar/manage",
         liquid.SC2_LABEL: "/calendar/manage",
         liquid.BW_LABEL: "/calendar/manage",
         liquid.CSGO_LABEL: "/calendar/manage",
@@ -47,7 +50,6 @@ class Html:
         liquid.CSGO_LABEL: 3,
         liquid.HOTS_LABEL: 4,
         liquid.SMASH_LABEL: 5,
-        liquid.TEAMLIQUID_LABEL: 999,
     }
 
     class UriBuilder:
