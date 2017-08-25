@@ -102,6 +102,9 @@ class Calendar:
 
             if event_blocks is None or len(event_blocks) == 0:
                 continue
+            else:
+                if self.debug:
+                    print("\t%s - %d events" % (cur_day.strftime("%d %b"), len(event_blocks)))
 
             for event_block in event_blocks:
                 if event_block is None:
@@ -132,7 +135,7 @@ class Calendar:
                 )
 
                 title_div = category_div.find("div", class_="cal_title")
-                if title_div:
+                if title_div and title_div.a is not None:
                     event_category = title_div.a.text
                     event_links['event'] = Html.UriBuilder.get_uri(event_type) + title_div.a.get('href')
                     m = re.search('quake/post/(\d+)/.*', event_links['event'])
