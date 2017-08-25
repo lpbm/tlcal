@@ -24,7 +24,7 @@ week = {}
 default_types = list(Html.base_uris.keys())
 default_start = datetime.now() - timedelta(days=1)
 
-parser = ArgumentParser(prog="tlevents")
+parser = ArgumentParser(prog="calendarevents")
 parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
                     default=default_start.strftime("%Y-%m-%d"))
 parser.add_argument('--interval', nargs='?', help="Interval of days to search for events", type=int, default=1)

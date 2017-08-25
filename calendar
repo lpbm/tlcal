@@ -35,7 +35,7 @@ liquid_types = list(liquid_Html.base_uris.keys())
 default_types = plusfw_types + liquid_types
 default_start = datetime.now() - timedelta(weeks=1)
 
-parser = ArgumentParser(prog="tlscraper")
+parser = ArgumentParser(prog="calendar")
 parser.add_argument('--start-date', help="The start date for loading events YYYY-MM-DD",
                     default=default_start.strftime("%Y-%m-%d"))
 parser.add_argument('--end-date', help="The end date for loading events YYYY-MM-DD",
