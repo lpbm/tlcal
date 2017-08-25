@@ -16,10 +16,10 @@ class Calendar:
         event_types = {
             0: "unk",
             1: "sc2",
-            2: "brw",
-            3: "csg",
-            4: "hot",
-            5: "sma"
+            2: "bw",
+            3: "csgo",
+            4: "hots",
+            5: "smash"
         }
         """
         A class get the event type
