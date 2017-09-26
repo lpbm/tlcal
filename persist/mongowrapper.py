@@ -47,7 +47,7 @@ class MongoWrapper:
                 types.append(_event.type)
 
             if isinstance(_event, Event):
-                original = self.db.events.find_one({"cal_id": _event.cal_id, "type": _event.type, "start_time": _event.start_time, "end_time": _event.end_time})
+                original = self.db.events.find_one({"cal_id": _event.cal_id, "type": _event.type, "canceled": false, "start_time": _event.start_time, "end_time": _event.end_time})
                 if original is None:
                     _event.last_modified_time = datetime.now()
                     result = self.db.events.insert_one(encoder.encode(_event))
