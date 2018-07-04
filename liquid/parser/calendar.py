@@ -22,6 +22,7 @@ class Calendar:
             4: liquid.LABEL_HOTS,
             5: liquid.LABEL_SMASH,
             6: liquid.LABEL_OWATCH,
+            7: liquid.LABEL_UNKNOWN,
         }
         """
         A class get the event type
@@ -34,6 +35,9 @@ class Calendar:
                 m = re.search('\d+', element["style"])
                 if m:
                     key = int(m.group(0))
+
+            if key > 7:
+                key = 0
             return Calendar.EventMapper.event_types[key]
 
     debug = False
