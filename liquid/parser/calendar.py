@@ -37,6 +37,7 @@ class Calendar:
                     key = int(m.group(0))
 
             if key > 7:
+                print("Tried to load icon for {}".format(key))
                 key = 0
             return Calendar.EventMapper.event_types[key]
 
