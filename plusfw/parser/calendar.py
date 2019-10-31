@@ -48,7 +48,7 @@ class Calendar:
                 m = re.search('\d+', element["class"][1])
                 if m:
                     key = int(m.group(0))
-            return Calendar.EventMapper.event_types[key]
+            return Calendar.EventMapper.event_types.get(key)
 
     debug = False
     type = ""
@@ -98,7 +98,10 @@ class Calendar:
                 if start_month == 13:
                     start_month = 1
                     start_year = self.date.year + 1
-            cur_day = day.replace(day=start_day, month=start_month, year=start_year)
+            try: 
+                cur_day = day.replace(day=start_day, month=start_month, year=start_year)
+            except ValueError as e:
+                print(e, "start_day {} - cur_day {}".format(start_day, cur_day)) 
             event_blocks = day_html.find_all("div", class_="cal_event")
 
             if event_blocks is None or len(event_blocks) == 0:
@@ -138,11 +141,13 @@ class Calendar:
                 title_div = category_div.find("div", class_="cal_title")
                 if title_div and title_div.a is not None:
                     event_category = title_div.a.text
-                    event_links['event'] = Html.UriBuilder.get_uri(event_type) + title_div.a.get('href')
-                    m = re.search('quake/post/(\d+)/.*', event_links['event'])
-                    if m:
-                        key = int(m.group(1))
-                        event_id = key
+                    uri = Html.UriBuilder.get_uri(event_type)
+                    if uri is not None:
+                        event_links['event'] = uri + title_div.a.get('href')
+                        m = re.search('quake/post/(\d+)/.*', event_links['event'])
+                        if m:
+                            key = int(m.group(1))
+                            event_id = key
 
                 if subtitle_div:
                     event_stage = subtitle_div.text

@@ -94,10 +94,10 @@ class Html:
 
         @staticmethod
         def get_uri(calendar=plusfw.LABEL_PFW):
-            return Html.base_uris[calendar]
+            return Html.base_uris.get(calendar)
 
         @staticmethod
-        def get_calendar_uri(calendar=plusfw.LABEL_PFW, by_week=True, date=None):
+        def get_calendar_uri(calendar=plusfw.LABEL_PFW, by_week=False, date=None):
             if by_week:
                 view_by = "week"
             else:
@@ -117,7 +117,7 @@ class Html:
             return Html.base_uris[calendar] + Html.event_path[calendar]
 
     @staticmethod
-    def get_calendar(calendar="+fw", by_week=True, date=None, debug=False):
+    def get_calendar(calendar="+fw", by_week=False, date=None, debug=False):
         """
         :param debug:
         :param date:
