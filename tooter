@@ -52,11 +52,12 @@ if debug:
         print("Found {} events".format(len(soonish_events)))
 
 tags = {
-    'sc2': ['SC2', 'StarCraft2'],
-    'qch': ['quake', 'QuakeChampions', 'quakecon', 'QWC'],
-    'dot': ['DotA2'],
-    'lol': ['LoL', 'LeagueOfLegends'],
-    'csg': ['CounterStrike', 'CS_GO'],
+    'sc2': ['SC2', 'StarCraft2', 'esports', 'calendar'],
+    'bw': ['BroodWar', 'esports', 'calendar'],
+    'qch': ['quake', 'QuakeChampions', 'esports', 'calendar'],
+    'dota': ['DotA2', 'esports', 'calendar'],
+    'lol': ['LoL', 'LeagueOfLegends', 'esports', 'calendar'],
+    'csgo': ['CounterStrike', 'CS_GO', 'esports', 'calendar'],
 }
 
 app_credentials = None
