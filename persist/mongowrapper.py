@@ -12,7 +12,7 @@ class MongoWrapper:
     def __init__(self, debug=False):
         self.debug = debug
         try:
-            self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=10')
+            self.client = MongoClient('mongodb://localhost:27017/?connectTimeoutMS=100')
             self.db = self.client.calendar
             self.client.server_info()
         except PyMongoError:

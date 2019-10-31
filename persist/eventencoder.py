@@ -32,7 +32,7 @@ class EventEncoder(JSONEncoder, JSONDecoder):
         o.content = s['content']
         if 'last_modified_time' in s:
             o.last_modified_time = s['last_modified_time']
-        if 'links' in s:
+        if 'links' in s and type(s['links']) is dict:
             o.links = s['links']
         if 'canceled' in s:
             o.canceled = s['canceled']
